@@ -76,16 +76,24 @@ class Solution:
             fast = fast.next.next
             slow = slow.next
         return False
-    # food for thought:
-    # why val is irrelavent? 
-    # why we need slow speed?
-    # why we choose 2?
-    # what is the why the complexity is O(n)?
 
     # 524
     def findLongestWord(self, s: str, dictionary: List[str]) -> str:
-        # https://leetcode.com/problems/longest-word-in-dictionary-through-deleting/description/
-        pass
+        def stringMatched(s1:str, s2:str) -> bool:
+            a, b = 0, 0
+            while a < len(s1) and b < len(s2):
+                if s1[a] == s2[b]:
+                    b+=1
+                a+=1
+            return b == len(s2)
+        
+        longestWord, longestWordLength = "", 0
+        for word in dictionary:
+            if stringMatched(s, word) \
+                and (len(word) > longestWordLength 
+                    or (len(word) == longestWordLength and word < longestWord)):
+                longestWord, longestWordLength = word, len(word)
+        return longestWord
 
     # 11*
     def maxArea(self, height: List[int]) -> int:
@@ -101,4 +109,39 @@ class Solution:
                 right -= 1
         return mostVolumn
 
-    # 15 26
+    # 15*
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        if len(nums) < 3: return []
+
+        nums.sort()
+        result = []
+        for i in range(len(nums)-2):
+            if i > 0 and nums[i] == nums[i-1]: continue
+            a = i + 1
+            b = len(nums) - 1
+            while a < b:
+                if nums[i] + nums[a] + nums[b] < 0:
+                    a+=1
+                elif nums[i] + nums[a] + nums[b] > 0:
+                    b-=1
+                else:                
+                    result.append([nums[i], nums[a], nums[b]])
+                    while a < b and nums[a] == nums[a+1]:
+                        a+=1
+                    while a < b and nums[b] == nums[b-1]:
+                        b-=1
+                    a+=1
+                    b-=1
+        return result
+
+    # 26
+    def removeDuplicates(self, nums: List[int]) -> int:
+        a, b = 0, 0
+        while b < len(nums):
+            while b+1 < len(nums) and nums[b] == nums[b+1]:
+                b+=1
+            nums[a]=nums[b] 
+            a+=1
+            b+=1
+        nums = nums[:a]
+        return a

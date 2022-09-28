@@ -43,4 +43,29 @@ class Solution:
 
   #451
   def frequencySort(self, s: str) -> str:
-    pass
+    countDict = {}
+    bucketArray = ["" for i in range(len(s)+1)]
+    for c in s:
+      countDict[c] = 1 + countDict.get(c, 0)
+    for c, count in countDict.items():
+      bucketArray[count] += c*count
+    
+    result = ""
+    for i in range(len(bucketArray) - 1, 0, -1):
+      result += bucketArray[i]
+    return result
+
+  #75* 荷兰国旗问题
+  def sortColors(self, nums: List[int]) -> None:
+    zeroUpperBound, i, twoLowerBound = 0, 0, len(nums)
+    # range(lowerBound, UpperBound)
+    while i < twoLowerBound:
+      if nums[i] == 0:
+        nums[zeroUpperBound], nums[i] = nums[i], nums[zeroUpperBound]
+        zeroUpperBound += 1
+        i += 1
+      elif nums[i] == 1:
+        i += 1
+      else:
+        nums[i], nums[twoLowerBound-1] = nums[twoLowerBound-1], nums[i]
+        twoLowerBound -= 1

@@ -23,12 +23,27 @@ class Solution:
     curEnd = intervals[0][1]
     count = 0
     for i in intervals[1:]:
-      if i[0] < curEnd:
-        count += 1
-      else:
+      if curEnd <= i[0]:
         curEnd = i[1]
+      else:
+        count += 1
     return count
 
   # 452
   def findMinArrowShots(self, points: List[List[int]]) -> int:
-    pass
+    points.sort(key=lambda l : l[1])
+    curEnd = points[0][1]
+    count = 1
+    for i in points[1:]:
+      if curEnd < i[0]:
+        curEnd = i[1]
+        count += 1
+    return count
+
+  # 406
+  def reconstructQueue(self, people: List[List[int]]) -> List[List[int]]:
+    people.sort(key=lambda l : (-l[0], l[1]))
+    result = []
+    for p in people:
+        result.insert(p[1], p)
+    return result

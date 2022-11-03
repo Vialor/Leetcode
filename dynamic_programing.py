@@ -44,6 +44,27 @@ class Solution:
     contMult = lambda p, q : functools.reduce(lambda a, b:a * b, range(p, q), 1)
     return int(contMult(c1 - c2 + 1, c1 + 1)/contMult(1, c2 + 1))
 
+  # 413*
+  def numberOfArithmeticSlices(self, nums: List[int]) -> int:
+    dp = [0, 0]
+    for i in range(2, len(nums)):
+      if 2*nums[i-1] == nums[i] + nums[i-2]:
+        dp.append(dp[i-1] + 1)
+      else:
+        dp.append(0)
+    return sum(dp)
+
+  # 343*
+  def integerBreak(self, n: int) -> int:
+    if n == 2: return 1
+    if n == 3: return 2
+    dp = [0, 1, 2, 3]
+    for i in range(4, n + 1):
+      dp.append(0)
+      for j in range(1, i // 2 + 1):
+        dp[i] = max(dp[j] * dp[i-j], dp[i])
+    return dp[n]
+
   # 300*
   def lengthOfLIS(self, nums: List[int]) -> int:
     LIS = [1] * len(nums) # LIS[k]: length of LIS that ends at kth index of nums

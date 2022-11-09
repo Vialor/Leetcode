@@ -43,7 +43,7 @@ class Solution:
     
     contMult = lambda p, q : functools.reduce(lambda a, b:a * b, range(p, q), 1)
     return int(contMult(c1 - c2 + 1, c1 + 1)/contMult(1, c2 + 1))
-
+  
   # 413*
   def numberOfArithmeticSlices(self, nums: List[int]) -> int:
     dp = [0, 0]
@@ -63,6 +63,18 @@ class Solution:
       dp.append(0)
       for j in range(1, i // 2 + 1):
         dp[i] = max(dp[j] * dp[i-j], dp[i])
+    return dp[n]
+
+  # 279
+  def numSquares(self, n: int) -> int:
+    dp = [0]
+    for i in range(1, n+1):
+      r = 1
+      minNum = float('inf')
+      while i >= r**2:
+        minNum = min(minNum, dp[i-r**2] + 1)
+        r += 1
+      dp.append(minNum)
     return dp[n]
 
   # 300*

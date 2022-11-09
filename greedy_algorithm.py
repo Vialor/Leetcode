@@ -19,7 +19,7 @@ class Solution:
   # 435*
   def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
     if not intervals: return 0
-    intervals.sort(key=lambda l : l[1])
+    intervals.sort(key=lambda x : x[1])
     curEnd = intervals[0][1]
     count = 0
     for i in intervals[1:]:
@@ -31,12 +31,23 @@ class Solution:
 
   # 452
   def findMinArrowShots(self, points: List[List[int]]) -> int:
-    points.sort(key=lambda l : l[1])
+    points.sort(key=lambda x : x[1])
     curEnd = points[0][1]
     count = 1
     for i in points[1:]:
       if curEnd < i[0]:
         curEnd = i[1]
+        count += 1
+    return count
+
+  # 646
+  def findLongestChain(self, pairs: List[List[int]]) -> int:
+    pairs.sort(key=lambda x : x[1])
+    curEnd = pairs[0][1]
+    count = 1
+    for left, right in pairs[1:]:
+      if left > curEnd:
+        curEnd = right
         count += 1
     return count
 

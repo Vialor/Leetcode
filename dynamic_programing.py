@@ -120,9 +120,49 @@ class Solution:
     return max(up, down)
 
   # 0-1 backpack
-  # 416*
+  # 416* 2D
+  # def canPartition(self, nums: List[int]) -> bool:
+  #   total = sum(nums)
+  #   if total % 2 == 1: return False
+  #   targetAmount = total // 2
+  #   # dp: [capacity][number of items considered]
+  #   dp = [[0 for i in range(len(nums) + 1)] for c in range(targetAmount + 1)]
+    
+  #   for c in range(1, targetAmount + 1):
+  #       for i in range(1, len(nums) + 1):
+  #           curValue = nums[i-1]
+  #           if c < curValue: dp[c][i] = dp[c][i-1]
+  #           else:
+  #               dp[c][i] = max(dp[c][i-1], curValue + dp[c-curValue][i-1])
+  #   return dp[targetAmount][len(nums)] == targetAmount
+  # 416* 1D
   def canPartition(self, nums: List[int]) -> bool:
     total = sum(nums)
-    if total % 2 == 1: return False
-    targetAmount = total // 2
-    nums.sort()
+    if total % 2:
+      return False
+    target = total // 2
+    # dp[t]: if nums can be partitioned to reach sum t
+    dp = [False] * (target + 1)
+    dp[0] = True
+    
+    for num in nums:
+      for t in range(target, num - 1, -1):
+        dp[t] = dp[t] or dp[t - num]
+    return dp[target]
+  
+  # 494
+  def findTargetSumWays(self, nums: List[int], target: int) -> int:
+    # sum(P) - sum(N) = target, sum(P) + sum(N) = sum(nums)
+    # sum(P) = (target + sum(nums)) // 2
+    if (target + sum(nums)) % 2: return 0
+    if target + sum(nums) < 0: return 0
+    targetPositiveSum = (target + sum(nums)) // 2
+    # dp[t]: number of ways to form P to reach t
+    dp = [1] + [0] * (targetPositiveSum)
+
+    for num in nums:
+      temp = dp[:]
+      for t in range(num, targetPositiveSum+1):
+        temp[t] += dp[t-num]
+      dp = temp
+    return dp[targetPositiveSum]

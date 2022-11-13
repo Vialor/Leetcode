@@ -166,3 +166,26 @@ class Solution:
         temp[t] += dp[t-num]
       dp = temp
     return dp[targetPositiveSum]
+
+  # 474
+  def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
+    # dp[p][q]: max size of subset such that it has no more than m 0's, n 1's 
+    dp = [[0 for q in range(n+1)] for p in range(m+1)]
+    for s in strs:
+      numOf0 = s.count("0")
+      numOf1 = s.count("1")
+      for p in range(m, numOf0-1, -1):
+        for q in range(n, numOf1-1, -1):
+          dp[p][q] = max(dp[p-numOf0][q-numOf1] + 1, dp[p][q])
+    return dp[m][n]
+
+  # 322*
+  def coinChange(self, coins: List[int], amount: int) -> int:
+    # dp[t]: min size needed to reach t
+    dp = [0] + [-1] * amount
+    for coin in coins:
+      for t in range(coin, amount+1):
+        if dp[t-coin] == -1: pass
+        elif dp[t] == -1: dp[t] = dp[t-coin] + 1
+        else: dp[t] = min(dp[t], dp[t-coin] + 1)
+    return dp[amount]

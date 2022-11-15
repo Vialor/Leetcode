@@ -189,3 +189,29 @@ class Solution:
         elif dp[t] == -1: dp[t] = dp[t-coin] + 1
         else: dp[t] = min(dp[t], dp[t-coin] + 1)
     return dp[amount]
+
+  # 518
+  def change(self, amount: int, coins: List[int]) -> int:
+    # dp[t]: num of ways to reach t
+    dp = [1] + [0] * amount
+    for coin in coins:
+      for t in range(coin, amount+1):
+        dp[t] += dp[t-coin]
+    return dp[amount]
+
+  # 139*
+  def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+    # dp[i]: if s[:i] can be made up from wordDict
+    dp = [True] + [False] * len(s)
+    for i in range(len(word), len(s) + 1):
+      for word in wordDict:
+        dp[i] = dp[i] or dp[i-len(word)] and s[i-len(word):i] == word
+    return dp[-1]
+
+  # 377
+  def combinationSum4(self, nums: List[int], target: int) -> int:
+    dp = [1] + [0] * target
+    for i in range(target + 1):
+      for num in nums:
+        if i >= num: dp[i] = dp[i] + dp[i-num]
+    return dp[target]

@@ -227,3 +227,34 @@ class Solution:
       for num in nums:
         if i >= num: dp[i] = dp[i] + dp[i-num]
     return dp[target]
+  
+  # 309
+  def maxProfit309(self, prices: List[int]) -> int:
+    numOfDays = len(prices)
+    # bidding => holding, bidding
+    # holding => holding, cooldown
+    # cooldown => bidding
+    # start with bidding
+    endWithBidding = [0] * numOfDays
+    # float("-inf") is a hardcoded way to say this is an impossible situation
+    # technically speaking, all the zeros here are just placeholders. float("-inf") might be better
+    endWithCooldown = [float("-inf")] + [0] * (numOfDays - 1)
+    endWithHolding = [-prices[0]] + [0] * (numOfDays - 1)
+    for i in range(1, numOfDays):
+      endWithBidding[i] = max(endWithBidding[i-1], endWithCooldown[i-1])
+      endWithHolding[i] = max(endWithBidding[i-1] - prices[i], endWithHolding[i-1])
+      endWithCooldown[i] = endWithHolding[i-1] + prices[i]
+    return max(endWithBidding[-1], endWithCooldown[-1])
+
+  # 714
+  def maxProfit714(self, prices: List[int], fee: int) -> int:
+    numOfDays = len(prices)
+    # bidding => bidding, holding
+    # holding => bidding, holding
+    # start with bidding
+    endWithBidding = [0] * numOfDays
+    endWithHolding = [-prices[0]] + [0] * (numOfDays - 1)
+    for i in range(1, numOfDays):
+      endWithBidding[i] = max(endWithBidding[i-1], endWithHolding[i-1] + prices[i] - fee)
+      endWithHolding[i] = max(endWithBidding[i-1] - prices[i], endWithHolding[i-1])
+    return endWithBidding[-1]

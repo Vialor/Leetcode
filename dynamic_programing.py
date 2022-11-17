@@ -235,15 +235,14 @@ class Solution:
     # holding => holding, cooldown
     # cooldown => bidding
     # start with bidding
-    endWithBidding = [0] * numOfDays
+    endWithBidding = [0]
     # float("-inf") is a hardcoded way to say this is an impossible situation
-    # technically speaking, all the zeros here are just placeholders. float("-inf") might be better
-    endWithCooldown = [float("-inf")] + [0] * (numOfDays - 1)
-    endWithHolding = [-prices[0]] + [0] * (numOfDays - 1)
+    endWithCooldown = [float("-inf")]
+    endWithHolding = [-prices[0]]
     for i in range(1, numOfDays):
-      endWithBidding[i] = max(endWithBidding[i-1], endWithCooldown[i-1])
-      endWithHolding[i] = max(endWithBidding[i-1] - prices[i], endWithHolding[i-1])
-      endWithCooldown[i] = endWithHolding[i-1] + prices[i]
+      endWithBidding.append(max(endWithBidding[i-1], endWithCooldown[i-1]))
+      endWithHolding.append(max(endWithBidding[i-1] - prices[i], endWithHolding[i-1]))
+      endWithCooldown.append(endWithHolding[i-1] + prices[i])
     return max(endWithBidding[-1], endWithCooldown[-1])
 
   # 714
@@ -252,9 +251,32 @@ class Solution:
     # bidding => bidding, holding
     # holding => bidding, holding
     # start with bidding
-    endWithBidding = [0] * numOfDays
-    endWithHolding = [-prices[0]] + [0] * (numOfDays - 1)
+    endWithBidding = [0]
+    endWithHolding = [-prices[0]]
     for i in range(1, numOfDays):
-      endWithBidding[i] = max(endWithBidding[i-1], endWithHolding[i-1] + prices[i] - fee)
-      endWithHolding[i] = max(endWithBidding[i-1] - prices[i], endWithHolding[i-1])
+      endWithBidding.append(max(endWithBidding[i-1], endWithHolding[i-1] + prices[i] - fee))
+      endWithHolding.append(max(endWithBidding[i-1] - prices[i], endWithHolding[i-1]))
     return endWithBidding[-1]
+
+  # 123
+  def maxProfit123(self, prices: List[int]) -> int:
+    # firstBuy => firstSell => secondBuy => secondSell
+    firstBuy, firstSell, secondBuy, secondSell = 0, 0, 0, 0
+    for price in prices:
+      firstBuy = max(-price, firstBuy)
+      firstSell = max(price - firstBuy, firstSell)
+      secondBuy = max(firstSell - price, secondBuy)
+      secondSell = max(secondBuy + price, secondSell)
+    return secondSell
+
+  # 188*
+  def maxProfit188(self, k: int, prices: List[int]) -> int:
+    # endWithHolding[i]: max profit within i transactions while holding the stock
+    endWithHolding = [float('-inf')] * (k + 1)
+    # endWithWaiting[i]: max profit within i transactions while not holding the stock
+    endWithWaiting = [0] + [float('-inf')] * k
+    for price in prices:
+      for i in range(1, k+1):
+        endWithHolding[i] = max(endWithWaiting[i-1] - price, endWithHolding[i])
+        endWithWaiting[i] = max(endWithWaiting[i], endWithHolding[i] + price)
+    return endWithWaiting[-1]

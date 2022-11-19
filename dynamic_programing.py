@@ -280,3 +280,14 @@ class Solution:
         endWithHolding[i] = max(endWithWaiting[i-1] - price, endWithHolding[i])
         endWithWaiting[i] = max(endWithWaiting[i], endWithHolding[i] + price)
     return endWithWaiting[-1]
+  
+  # 650
+  def minSteps(self, n: int) -> int:
+    dp = [-1, 0]
+    for i in range(2, n+1):
+      dp.append(i)
+      for divider in range(2, n):
+        if i % divider == 0:
+          dp[i] = (dp[divider] + dp[i // divider])
+          break
+    return dp[n]

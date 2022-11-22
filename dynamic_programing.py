@@ -3,13 +3,19 @@ import math
 from typing import List, Optional
 
 class Solution:
-  # FIB
+  # A. GENERAL
   # 70
   def climbStairs(self, n: int) -> int:
     dp = [0, 1, 2] # dp[k]: methods to climb k
     for i in range(3, n+1):
       dp.append(dp[i-1] + dp[i-2])
     return dp[n]
+  
+  def minCostClimbingStairs(self, cost: List[int]) -> int:
+    dp = [0, 0]
+    for i in range(2, len(cost) + 1):
+        dp.append(min(dp[i-1] + cost[i-1], dp[i-2] + cost[i-2]))
+    return dp[len(cost)]
 
   # 198
   def rob1(self, nums: List[int]) -> int:
@@ -24,7 +30,6 @@ class Solution:
     if len(nums) == 1: return nums[0]
     return max(self.rob1(nums[1:]), self.rob1(nums[:-1]))
 
-  # PATH
   # 64*
   def minPathSum(self, grid: List[List[int]]) -> int:
     m = len(grid)
@@ -46,7 +51,6 @@ class Solution:
     contMult = lambda p, q : functools.reduce(lambda a, b:a * b, range(p, q), 1)
     return int(contMult(c1 - c2 + 1, c1 + 1)/contMult(1, c2 + 1))
   
-  # INTERVAL
   # 413*
   def numberOfArithmeticSlices(self, nums: List[int]) -> int:
     dp = [0, 0]
@@ -57,7 +61,6 @@ class Solution:
         dp.append(0)
     return sum(dp)
 
-  # INT BREAKDOWN
   # 343*
   def integerBreak(self, n: int) -> int:
     if n == 2: return 1
@@ -87,7 +90,6 @@ class Solution:
         dp.append(result)
     return dp[len(s)]
 
-  # SEQUENCE
   # 279
   def numSquares(self, n: int) -> int:
     dp = [0]
@@ -131,7 +133,7 @@ class Solution:
             down = up + 1
     return max(up, down)
 
-  # 0-1 backpack
+  # B. 0-1 KNAPSACK
   # 416* 2D
   # def canPartition(self, nums: List[int]) -> bool:
   #   total = sum(nums)
@@ -227,7 +229,8 @@ class Solution:
       for num in nums:
         if i >= num: dp[i] = dp[i] + dp[i-num]
     return dp[target]
-  
+
+  # C. Finite State Machine
   # 309
   def maxProfit309(self, prices: List[int]) -> int:
     numOfDays = len(prices)

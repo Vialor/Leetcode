@@ -58,3 +58,20 @@ class Solution:
     for p in people:
         result.insert(p[1], p)
     return result
+
+  # 121
+  def maxProfit121(self, prices: List[int]) -> int:
+    lowValue = prices[0]
+    profit = 0
+    for price in prices[1:]:
+        lowValue = min(price, lowValue)
+        profit = max(price - lowValue, profit)
+    return profit
+
+  # 122
+  def maxProfit(self, prices: List[int]) -> int:
+    profit = 0
+    for i in range(1, len(prices)):
+        if prices[i] > prices[i-1]:
+            profit += prices[i] - prices[i-1]
+    return profit

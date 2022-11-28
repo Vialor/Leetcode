@@ -1,3 +1,4 @@
+import bisect
 import functools
 import math
 from typing import List, Optional
@@ -111,6 +112,15 @@ class Solution:
           LIS[i] = max(LIS[i], LIS[j] + 1)
     return max(LIS)
 
+  # 300* bisect method (this method is really sophisticated and also quicker O(Nlog(N)))
+  # def lengthOfLIS(self, nums: List[int]) -> int:
+  #   LIS = []
+  #   for num in nums:
+  #       left = bisect.bisect_left(LIS, num)
+  #       if left == len(LIS): LIS.append(num)
+  #       else: LIS[left] = num
+  #   return len(LIS)
+
   # 1143*
   def longestCommonSubsequence(self, text1: str, text2: str) -> int:
     m, n = len(text1), len(text2)
@@ -122,6 +132,16 @@ class Solution:
         else:
           dp[i][j] = max(dp[i-1][j], dp[i][j-1])
     return dp[m][n]
+  
+  # 354*
+  def maxEnvelopes(self, envelopes: List[List[int]]) -> int:
+    envelopes.sort(key=lambda x : (x[0], -x[1]))
+    LIS = []
+    for _, height in envelopes:
+        left = bisect.bisect_left(LIS, height)
+        if left == len(LIS): LIS.append(height)
+        elif left == len(LIS) - 1: LIS[left] = height
+    return len(LIS)
   
   # 376*
   def wiggleMaxLength(self, nums: List[int]) -> int:

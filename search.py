@@ -2,6 +2,10 @@ import math
 from typing import List, Optional
 
 class Solution:
+  # BFS
+  # 1091
+
+  # DFS
   # 695
   def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
     m, n = len(grid), len(grid[0])
@@ -27,3 +31,7 @@ class Solution:
         for j in range(n):
             if DFS(i, j): count += 1
     return count
+
+  # 212
+  def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+    pass

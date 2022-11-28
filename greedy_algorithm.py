@@ -69,9 +69,48 @@ class Solution:
     return profit
 
   # 122
-  def maxProfit(self, prices: List[int]) -> int:
+  def maxProfit122(self, prices: List[int]) -> int:
     profit = 0
     for i in range(1, len(prices)):
         if prices[i] > prices[i-1]:
             profit += prices[i] - prices[i-1]
     return profit
+  
+  # 605
+  def canPlaceFlowers(self, flowerbed: List[int], n: int) -> bool:
+    count = 0
+    for i in range(len(flowerbed)):
+      if flowerbed[i] == 1: continue
+      if (i-1 < 0 or flowerbed[i-1] == 0) and (i+1 >= len(flowerbed) or flowerbed[i+1] == 0):
+        flowerbed[i] = 1
+        count += 1
+    return count >= n
+
+  # 392
+  def isSubsequence(self, s: str, t: str) -> bool:
+    sIndex = 0
+    for c in t:
+      if sIndex >= len(s): return True
+      if s[sIndex] == c:
+        sIndex += 1
+    return sIndex == len(s)
+  
+  # 53
+  def maxSubArray(self, nums: List[int]) -> int:
+    curSum = 0
+    maxSum = nums[0]
+    for num in nums:
+      curSum += num
+      maxSum = max(curSum, maxSum)
+      if curSum < 0: curSum = 0
+    return maxSum
+
+  # 763
+  def partitionLabels(self, s: str) -> List[int]:
+    if len(s) == 0: return [] 
+    lastOccurences = { s[i]: i for i in range(len(s)) }
+    i, end = 0, 1
+    while i < end:
+      end = max(end, lastOccurences[s[i]] + 1)
+      i += 1
+    return [end] + self.partitionLabels(s[end:])

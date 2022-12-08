@@ -1,6 +1,6 @@
 import collections
 import math
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 class Solution:
   # BFS
@@ -89,6 +89,57 @@ class Solution:
         for j in range(n):
             if DFS(i, j): count += 1
     return count
+
+  # 547
+  def findCircleNum(self, isConnected: List[List[int]]) -> int:
+    cityNum = len(isConnected)
+    visitedCities = []
+    count = 0
+    def DFS(city: int):
+      visitedCities.append(city)
+      for connectedCity in range(cityNum):
+        if connectedCity not in visitedCities and isConnected[city][connectedCity]:
+          DFS(connectedCity)
+    for city in range(cityNum):
+      if city not in visitedCities:
+        DFS(city)
+        count += 1
+    return count
+
+  # 130
+  def solve(self, board: List[List[str]]) -> None:
+    # every grid has 4 states: X O A B
+    # A: has been visited by DFSBoundary
+    # B: has been visited, and should be set to O in the final answer
+    m,n = len(board), len(board[0])
+
+    def DFSBoundary(i: int, j: int) -> Tuple[int, int] or None:
+      # return a grid at the border connected to board[i][j]
+      if board[i][j] == 'X' or board[i][j] == 'A': return None
+      board[i][j] = 'A'
+      if i == m-1 or i == 0 or j == n-1 or j == 0: return (i, j)
+      return DFSBoundary(i-1, j) or DFSBoundary(i+1, j) or DFSBoundary(i, j-1) or DFSBoundary(i, j+1)
+
+    def DFSPaint(i: int, j: int, s: str) -> None:
+      # set all grids connected to board[i][j] to s
+      if i >= m or i < 0 or j >= n or j < 0 or board[i][j] == 'X' or board[i][j] == s: return
+      board[i][j] = s
+      DFSPaint(i-1, j, s)
+      DFSPaint(i+1, j, s)
+      DFSPaint(i, j-1, s)
+      DFSPaint(i, j+1, s)
+      
+    for i in range(m):
+      for j in range(n):
+        if board[i][j] == 'O':
+          coordinates  = DFSBoundary(i, j)
+          if coordinates: DFSPaint(coordinates[0], coordinates[1], 'B')
+          else: DFSPaint(i, j, 'X')
+          
+    for i in range(m):
+      for j in range(n):
+        if board[i][j] == 'B':
+          board[i][j] = 'O'
 
   # 212
   def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:

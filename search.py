@@ -106,40 +106,68 @@ class Solution:
         count += 1
     return count
 
-  # 130
-  def solve(self, board: List[List[str]]) -> None:
-    # every grid has 4 states: X O A B
-    # A: has been visited by DFSBoundary
-    # B: has been visited, and should be set to O in the final answer
-    m,n = len(board), len(board[0])
+  # 130 double DFS
+  # def solve(self, board: List[List[str]]) -> None:
+  #   # every grid has 4 states: X O A B
+  #   # A: has been visited by DFSBoundary
+  #   # B: has been visited, and should be set to O in the final answer
+  #   m,n = len(board), len(board[0])
 
-    def DFSBoundary(i: int, j: int) -> Tuple[int, int] or None:
-      # return a grid at the border connected to board[i][j]
-      if board[i][j] == 'X' or board[i][j] == 'A': return None
-      board[i][j] = 'A'
-      if i == m-1 or i == 0 or j == n-1 or j == 0: return (i, j)
-      return DFSBoundary(i-1, j) or DFSBoundary(i+1, j) or DFSBoundary(i, j-1) or DFSBoundary(i, j+1)
+  #   def DFSBoundary(i: int, j: int) -> Tuple[int, int] or None:
+  #     # return a grid at the border connected to board[i][j]
+  #     if board[i][j] == 'X' or board[i][j] == 'A': return None
+  #     board[i][j] = 'A'
+  #     if i == m-1 or i == 0 or j == n-1 or j == 0: return (i, j)
+  #     return DFSBoundary(i-1, j) or DFSBoundary(i+1, j) or DFSBoundary(i, j-1) or DFSBoundary(i, j+1)
 
-    def DFSPaint(i: int, j: int, s: str) -> None:
-      # set all grids connected to board[i][j] to s
-      if i >= m or i < 0 or j >= n or j < 0 or board[i][j] == 'X' or board[i][j] == s: return
-      board[i][j] = s
-      DFSPaint(i-1, j, s)
-      DFSPaint(i+1, j, s)
-      DFSPaint(i, j-1, s)
-      DFSPaint(i, j+1, s)
+  #   def DFSPaint(i: int, j: int, s: str) -> None:
+  #     # set all grids connected to board[i][j] to s
+  #     if i >= m or i < 0 or j >= n or j < 0 or board[i][j] == 'X' or board[i][j] == s: return
+  #     board[i][j] = s
+  #     DFSPaint(i-1, j, s)
+  #     DFSPaint(i+1, j, s)
+  #     DFSPaint(i, j-1, s)
+  #     DFSPaint(i, j+1, s)
       
-    for i in range(m):
-      for j in range(n):
-        if board[i][j] == 'O':
-          coordinates  = DFSBoundary(i, j)
-          if coordinates: DFSPaint(coordinates[0], coordinates[1], 'B')
-          else: DFSPaint(i, j, 'X')
+  #   for i in range(m):
+  #     for j in range(n):
+  #       if board[i][j] == 'O':
+  #         coordinates  = DFSBoundary(i, j)
+  #         if coordinates: DFSPaint(coordinates[0], coordinates[1], 'B')
+  #         else: DFSPaint(i, j, 'X')
           
+  #   for i in range(m):
+  #     for j in range(n):
+  #       if board[i][j] == 'B':
+  #         board[i][j] = 'O'
+  # 130 
+  def solve(self, board: List[List[str]]) -> None:
+    m, n = len(board), len(board[0])
+    
+    def DFS(i: int, j: int) -> None:
+      if i < 0 or i >= m or j < 0 or j >= n: return
+      if board[i][j] == 'X' or board[i][j] == 'A': return
+      board[i][j] = 'A'
+      DFS(i-1, j); DFS(i+1, j); DFS(i, j-1), DFS(i, j+1)
+    
+    for i in range(m):
+      if (board[i][0] == 'O'):
+        DFS(i, 0)
+      if (board[i][n-1] == 'O'):
+        DFS(i, n-1)
+
+    for j in range(n):
+      if (board[0][j] == 'O'):
+        DFS(0, j)
+      if (board[m-1][j] == 'O'):
+        DFS(m-1, j)
+
     for i in range(m):
       for j in range(n):
-        if board[i][j] == 'B':
+        if board[i][j] == 'A':
           board[i][j] = 'O'
+        elif board[i][j] == 'O':
+          board[i][j] = 'X'
 
   # 212
   def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:

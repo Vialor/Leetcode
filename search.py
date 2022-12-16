@@ -169,6 +169,82 @@ class Solution:
         elif board[i][j] == 'O':
           board[i][j] = 'X'
 
+  # 417
+  def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+    m, n = len(heights), len(heights[0])
+    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    reach = [['' for j in range(n)] for i in range(m)]
+    result = []
+    def DFS(i: int, j: int, S: str) -> None:
+      reach[i][j] += S
+      for x, y in directions:
+        nextI, nextJ = i+x, j+y
+        if nextI < 0 or nextJ < 0 or nextI >= m or nextJ >= n \
+          or heights[nextI][nextJ] < heights[i][j] \
+          or S in reach[nextI][nextJ]:
+          continue
+        DFS(nextI, nextJ, S)
+
+    for i in range(m):
+      DFS(i, 0, 'P'); DFS(i, n-1, 'A')
+    for j in range(n):
+      DFS(0, j, 'P'); DFS(m-1, j, 'A')
+    for i in range(m):
+      for j in range(n):
+        curGrid = reach[i][j]
+        if 'A' in curGrid and 'P' in curGrid:
+          result.append([i, j])
+    return result
+
+  # Backtracking
+  # 17
+  def letterCombinations(self, digits: str) -> List[str]:
+    digitToLetters = {
+        '2': 'abc',
+        '3': 'def',
+        '4': 'ghi',
+        '5': 'jkl',
+        '6': 'mno',
+        '7': 'pqrs',
+        '8': 'tuv',
+        '9': 'wxyz',
+    }
+    result = []
+    def backtrack(curStr: str):
+      if len(digits) == len(curStr):
+        result.append(curStr)
+        return
+      for l in digitToLetters[digits[len(curStr)]]:
+        backtrack(curStr + l)
+    if digits: backtrack('')
+    return result
+
+  # 93
+  def restoreIpAddresses(self, s: str) -> List[str]:
+    result = []
+
+    def isValidIntString(n: str):
+      if not n.isdecimal(): return False
+      if n != '0' and n[0] == '0': return False
+      nNum = int(n)
+      return nNum >= 0 and nNum <= 255
+
+    def backtrack(curStr: str, depth: int, index: int):
+      if depth == 4:
+        if index >= len(s):
+          result.append(curStr)
+        return
+      for i in [1,2,3]:
+        if index+i > len(s): break
+        nextStr = s[index:index+i]
+        if isValidIntString(nextStr):
+          backtrack(curStr + '.' + nextStr if curStr else nextStr, depth+1, index+i)
+    
+    backtrack('', 0, 0)
+    return result
+      
+
+
   # 212
   def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
     pass

@@ -243,7 +243,88 @@ class Solution:
     backtrack('', 0, 0)
     return result
       
+  # 79
+  def exist(self, board: List[List[str]], word: str) -> bool:
+    directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]
+    m, n = len(board), len(board[0])
+    hasVisited = [[False for p in range(n)] for q in range(m)]
 
+    for w in set(word):
+      for line in board:
+        if w in line: 
+          break
+      else: return False
+
+    def DFS(i, j, word):
+      if len(word) == 1 and board[i][j] == word[0]: return True
+      if board[i][j] != word[0]: return False
+      for a, b in directions:
+        if i+a < 0 or i+a >= m or j+b < 0 or j+b >= n or hasVisited[i+a][j+b]:
+          continue
+        hasVisited[i+a][j+b] = True
+        if DFS(i+a, j+b, word[1:]): return True
+        hasVisited[i+a][j+b] = False
+      return False
+
+    for i in range(m):
+      for j in range(n):
+        hasVisited[i][j] = True
+        if DFS(i, j, word):
+          return True
+        hasVisited[i][j] = False
+    return False
+
+  # 257
+  class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+      self.val = val
+      self.left = left
+      self.right = right
+
+  def binaryTreePaths(self, root: Optional[TreeNode]) -> List[str]:
+    result = []
+    def DFS(root, path):
+      if not root: return
+      newPath = f"{path}->{root.val}" if path else str(root.val)
+      if not root.left and not root.right:
+        result.append(newPath)
+      else:
+        DFS(root.left, newPath)
+        DFS(root.right, newPath)
+    DFS(root, '')
+    return result
+
+  # 46
+  def permute(self, nums: List[int]) -> List[List[int]]:
+    result = []
+    visited = [ False for num in nums ]
+    def DFS(permutation: List[int]):
+      if len(permutation) == len(nums):
+        result.append(permutation)
+      for i in range(len(nums)):
+        if not visited[i]:
+          visited[i] = True
+          DFS(permutation + [nums[i]])
+          visited[i] = False
+    DFS([])
+    return result
+
+  # 47
+  def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+    nums.sort()
+    result = []
+    visited = [ False for num in nums ]
+    def DFS(permutation: List[int]):
+      if len(permutation) == len(nums):
+        result.append(permutation)
+      for i in range(len(nums)):
+        if i > 0 and nums[i] == nums[i-1] and not visited[i-1]: continue
+        if not visited[i]:
+          visited[i] = True
+          DFS(permutation + [nums[i]])
+          visited[i] = False
+    DFS([]) 
+    return result
 
   # 212
   def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:

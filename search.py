@@ -297,10 +297,11 @@ class Solution:
   # 46
   def permute(self, nums: List[int]) -> List[List[int]]:
     result = []
-    visited = [ False for num in nums ]
+    visited = [ False ] * len(nums)
     def DFS(permutation: List[int]):
       if len(permutation) == len(nums):
         result.append(permutation)
+        return
       for i in range(len(nums)):
         if not visited[i]:
           visited[i] = True
@@ -313,10 +314,11 @@ class Solution:
   def permuteUnique(self, nums: List[int]) -> List[List[int]]:
     nums.sort()
     result = []
-    visited = [ False for num in nums ]
+    visited = [ False ] * len(nums)
     def DFS(permutation: List[int]):
       if len(permutation) == len(nums):
         result.append(permutation)
+        return
       for i in range(len(nums)):
         if i > 0 and nums[i] == nums[i-1] and not visited[i-1]: continue
         if not visited[i]:
@@ -324,6 +326,41 @@ class Solution:
           DFS(permutation + [nums[i]])
           visited[i] = False
     DFS([]) 
+    return result
+
+  # 77
+  def combine(self, n: int, k: int) -> List[List[int]]:
+    result = []
+    visited = [ False ] * (n + 1)
+    def DFS(combination: List[int]):
+      if len(combination) == k:
+        result.append(combination)
+        return
+      start = combination[-1] + 1 if combination else 1
+      for i in range(start, n+1):
+        if not visited[i]:
+          visited[i] = True
+          DFS(combination + [i])
+          visited[i] = False
+    DFS([])
+    return result
+
+  # 39
+  def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+    candidates.sort()
+    result = []
+    def DFS(path: List[int], prevSum: int):
+      for candidate in candidates:
+        if path and candidate < path[-1]: continue
+        nextSum = prevSum + candidate
+        nextPath = path + [candidate]
+        if nextSum < target:
+          DFS(nextPath, nextSum)
+        else:
+          if nextSum == target:
+            result.append(nextPath)
+          break
+    DFS([], 0)
     return result
 
   # 212

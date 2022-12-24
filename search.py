@@ -349,11 +349,11 @@ class Solution:
   def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
     candidates.sort()
     result = []
-    def DFS(path: List[int], prevSum: int):
+    def DFS(path: List[int], curSum: int):
       for candidate in candidates:
         if path and candidate < path[-1]: continue
-        nextSum = prevSum + candidate
         nextPath = path + [candidate]
+        nextSum = curSum + candidate
         if nextSum < target:
           DFS(nextPath, nextSum)
         else:
@@ -361,6 +361,48 @@ class Solution:
             result.append(nextPath)
           break
     DFS([], 0)
+    return result
+  
+  # 70
+  def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+    candidates.sort()
+    visited = [ False ] * len(candidates)
+    result = []
+    def DFS(path: List[int], curSum: int, startIndex: int):
+      for i in range(startIndex, len(candidates)):
+        candidate = candidates[i]
+        if i > 0 and candidates[i] == candidates[i-1] and not visited[i-1]: continue
+        nextPath = path + [candidate]
+        nextSum = curSum + candidate
+        if nextSum < target:
+          visited[i] = True
+          DFS(nextPath, nextSum, i+1)
+          visited[i] = False
+        else:
+          if nextSum == target:
+            result.append(nextPath)
+          break
+    DFS([], 0, 0)
+    return result
+
+  # 216
+  def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+    result = []
+    def DFS(path: List[int], curSum: int, pathLen: int, start: int):
+      for i in range(start, 10):
+        nextPath = path + [i]
+        nextSum = curSum + i
+        nextPathLen = pathLen + 1
+        if nextSum == n and nextPathLen == k:
+          result.append(nextPath)
+          break
+        elif nextSum < n and nextPathLen == k:
+          continue
+        elif nextPathLen < k and nextSum < n:
+          DFS(nextPath, nextSum, nextPathLen, i+1)
+        else:
+          break
+    DFS([], 0, 0, 1)
     return result
 
   # 212

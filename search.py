@@ -405,6 +405,31 @@ class Solution:
     DFS([], 0, 0, 1)
     return result
 
+  # 78
+  def subsets(self, nums: List[int]) -> List[List[int]]:
+    result = []
+    def DFS(path, start):
+      result.append(path)
+      for i in range(start, len(nums)):
+        DFS(path + [nums[i]], i+1)
+    DFS([], 0)
+    return result
+  
+  # 90
+  def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+    nums.sort()
+    visited = [ False ] * len(nums)
+    result = []
+    def DFS(path, start):
+      result.append(path)
+      for i in range(start, len(nums)):
+        if i > 0 and not visited[i-1] and nums[i] == nums[i-1]: continue
+        visited[i] = True
+        DFS(path + [nums[i]], i+1)
+        visited[i] = False
+    DFS([], 0)
+    return result
+
   # 212
   def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
     pass

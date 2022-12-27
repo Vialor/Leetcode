@@ -1,6 +1,7 @@
 import collections
+import copy
 import math
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 class Solution:
   # BFS
@@ -244,35 +245,31 @@ class Solution:
     return result
       
   # 79
-  def exist(self, board: List[List[str]], word: str) -> bool:
-    directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]
-    m, n = len(board), len(board[0])
-    hasVisited = [[False for p in range(n)] for q in range(m)]
-
-    for w in set(word):
-      for line in board:
-        if w in line: 
-          break
-      else: return False
-
-    def DFS(i, j, word):
-      if len(word) == 1 and board[i][j] == word[0]: return True
-      if board[i][j] != word[0]: return False
-      for a, b in directions:
-        if i+a < 0 or i+a >= m or j+b < 0 or j+b >= n or hasVisited[i+a][j+b]:
-          continue
-        hasVisited[i+a][j+b] = True
-        if DFS(i+a, j+b, word[1:]): return True
-        hasVisited[i+a][j+b] = False
+  def exist(self, board: List[List[str]], word: str) -> bool:  
+      ROWS, COLS = len(board), len(board[0])   
+      def DFS(r,c,i):
+        if i == len(word): return True
+        if (r <0  or c <0 or r >= ROWS or c >= COLS or word[i]!= board[r][c]):
+          return False
+        temp = board[r][c]
+        board[r][c] = "#"
+        res = (DFS(r+1, c, i+1) or DFS(r-1, c, i+1) or DFS(r, c+1, i+1) or DFS(r, c-1, i+1)) 
+        board[r][c] = temp 
+        return res   
+      for r in range(ROWS):
+        for c in range(COLS):
+          if board[r][c] == word[0]:
+            if DFS(r,c,0):
+              return True
       return False
 
-    for i in range(m):
-      for j in range(n):
-        hasVisited[i][j] = True
-        if DFS(i, j, word):
-          return True
-        hasVisited[i][j] = False
-    return False
+  # 212
+  def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+    directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]
+    ROWS, COLS = len(board), len(board[0])
+    result = []
+    # TODO
+    return result
 
   # 257
   class TreeNode:
@@ -430,6 +427,77 @@ class Solution:
     DFS([], 0)
     return result
 
-  # 212
-  def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
-    pass
+  # 131
+  def partition(self, s: str) -> List[List[str]]:
+    result = []
+    def isPalindrome(string: str):
+      return string == string[::-1]
+    def DFS(path: List[str], rest: str):
+      if not rest: result.append(path)
+      for i in range(len(rest)):
+        if isPalindrome(rest[:i+1]):
+          DFS(path + [rest[:i+1]], rest[i+1:])
+    DFS([], s)
+    return result
+
+  # 37
+  def solveSudoku(self, board: List[List[str]]) -> None:
+    allPossibleNumbers = { str(n) for n in range(1, 10) }
+    gridPositions = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+
+    def getAvailableNumbers(i: int, j: int) -> List[str]:
+      alreadyChosenNumbers = set()
+      gridI, gridJ = i // 3, j // 3
+      for p in gridPositions:
+        alreadyChosenNumbers.add(board[gridI*3 + p[0]][gridJ*3 + p[1]])
+      for p in range(9):
+        alreadyChosenNumbers.add(board[i][p])
+        alreadyChosenNumbers.add(board[p][j])
+      return allPossibleNumbers - alreadyChosenNumbers
+
+    def getNextEmptyCell(startI: int=-1, startJ: int=-1) -> Tuple[int, int]: # find next empty cell after board[startI][startJ]
+      for j in range(startJ+1, 9):
+        if board[startI][j] == '.':
+          return startI, j
+      for i in range(startI+1, 9):
+        for j in range(9):
+          if board[i][j] == '.':
+            return i, j
+      return -1, -1
+
+    def DFS(i: int, j: int) -> bool: # return True when solution found
+      if i == -1 and j == -1: return True
+      nextI, nextJ = getNextEmptyCell(i, j)
+      for n in getAvailableNumbers(i, j):
+        board[i][j] = n
+        if DFS(nextI, nextJ): return True
+        board[i][j] = '.'
+      return False
+
+    initialI, initialJ = getNextEmptyCell()
+    DFS(initialI, initialJ)
+  
+  # 51
+  def solveNQueens(self, n: int) -> List[List[str]]:
+    result = []
+    board = ['.' * n] * n
+    
+    def isUnderAttack(row: int, col: int) -> bool:
+      for a in range(n):
+        for b in range(n):
+          if board[a][b] == 'Q' and (a == row or b == col or a-b == row-col or a+b == row+col):
+            return True
+      return False
+
+    def DFS(row: int):
+      if row == n:
+        result.append(copy.deepcopy(board))
+        return
+      for col in range(n):
+        if not isUnderAttack(row, col):
+          board[row] = board[row][:col] + 'Q' + board[row][col+1:]
+          DFS(row + 1)
+          board[row] = '.' * n
+
+    DFS(0)
+    return result

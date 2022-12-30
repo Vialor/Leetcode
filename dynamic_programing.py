@@ -12,6 +12,7 @@ class Solution:
       dp.append(dp[i-1] + dp[i-2])
     return dp[n]
   
+  # 746
   def minCostClimbingStairs(self, cost: List[int]) -> int:
     dp = [0, 0]
     for i in range(2, len(cost) + 1):
@@ -124,6 +125,7 @@ class Solution:
   # 1143*
   def longestCommonSubsequence(self, text1: str, text2: str) -> int:
     m, n = len(text1), len(text2)
+    # dp[i][j]: longest common subsequence of text1[:i] and text2[:j]
     dp = [[0 for j in range(n+1)] for i in range(m+1)]
     for i in range(1, m+1):
       for j in range(1, n+1):
@@ -195,10 +197,8 @@ class Solution:
     dp = [1] + [0] * (targetPositiveSum)
 
     for num in nums:
-      temp = dp[:]
-      for t in range(num, targetPositiveSum+1):
-        temp[t] += dp[t-num]
-      dp = temp
+      for t in range(targetPositiveSum, num-1, -1):
+        dp[t] += dp[t-num]
     return dp[targetPositiveSum]
 
   # 474
@@ -206,8 +206,7 @@ class Solution:
     # dp[p][q]: max size of subset such that it has no more than m 0's, n 1's 
     dp = [[0 for q in range(n+1)] for p in range(m+1)]
     for s in strs:
-      numOf0 = s.count("0")
-      numOf1 = s.count("1")
+      numOf0, numOf1 = s.count("0"), s.count("1")
       for p in range(m, numOf0-1, -1):
         for q in range(n, numOf1-1, -1):
           dp[p][q] = max(dp[p-numOf0][q-numOf1] + 1, dp[p][q])

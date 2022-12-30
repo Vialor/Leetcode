@@ -3,6 +3,39 @@ import copy
 import math
 from typing import List, Optional, Set, Tuple
 
+# 212
+class TrieNode:
+  def __init__(self, parent=None):
+    self.children = {}
+    self.isEnd = False
+    self.parent = parent
+
+  def addWord(self, word: str):
+    cur = self
+    for c in word:
+      if c not in cur.children:
+        cur.children[c] = TrieNode(cur)
+      cur = cur.children[c]
+    cur.isEnd = True
+  
+  def removeWord(self, word):
+    self.isEnd = False
+    cur = self
+    while cur and word:
+      if len(cur.children) > 0:
+        break
+      else:
+        cur = cur.parent
+        last, word = word[-1], word[:-1]
+        del cur.children[last]
+
+# 257
+class TreeNode:
+  def __init__(self, val=0, left=None, right=None):
+    self.val = val
+    self.left = left
+    self.right = right
+
 class Solution:
   # BFS
   # 1091
@@ -263,21 +296,36 @@ class Solution:
               return True
       return False
 
-  # 212
+  # 212*
   def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+    result = []
     directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]
     ROWS, COLS = len(board), len(board[0])
-    result = []
-    # TODO
+    trieRoot = TrieNode()
+    for word in words:
+      trieRoot.addWord(word)
+
+    def DFS(row: int, col: int, trieNode: TrieNode, path: str):
+      if row < 0 or row >= ROWS or col < 0 or col >= COLS\
+        or board[row][col] not in trieNode.children:
+        return
+      curChar = board[row][col]
+      curNode = trieNode.children[curChar]
+      curPath = path + curChar
+      if curNode.isEnd:
+        result.append(curPath)
+        curNode.removeWord(curPath)
+      board[row][col] = '#'
+      for i, j in directions:
+        DFS(row+i, col+j, curNode, curPath)
+      board[row][col] = curChar
+
+    for row in range(ROWS):
+      for col in range(COLS):
+        DFS(row, col, trieRoot, '')
     return result
 
   # 257
-  class TreeNode:
-    def __init__(self, val=0, left=None, right=None):
-      self.val = val
-      self.left = left
-      self.right = right
-
   def binaryTreePaths(self, root: Optional[TreeNode]) -> List[str]:
     result = []
     def DFS(root, path):

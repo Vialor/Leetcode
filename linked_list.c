@@ -2,8 +2,8 @@
 #include <string.h>
 
 struct ListNode {
-    int val;
-    struct ListNode *next;
+  int val;
+  struct ListNode *next;
 };
 
 // 160
@@ -44,8 +44,11 @@ struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2){
 // 83
 struct ListNode* deleteDuplicates(struct ListNode* head){
   if (!head || !head->next) return head;
-  if (head->val == head->next->val)
-    return deleteDuplicates(head->next);
-  head->next = deleteDuplicates(head->next);
+  struct ListNode* nextNode = head->next;
+  if (head->val == nextNode->val) {
+    free(head);
+    return deleteDuplicates(nextNode);
+  }
+  head->next = deleteDuplicates(nextNode);
   return head;
 }

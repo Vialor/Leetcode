@@ -32,24 +32,6 @@ struct ListNode* reverseList(struct ListNode* head){
 struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2){
   if (!list1) return list2;
   if (!list2) return list1;
-  struct ListNode* head = list1->val < list2->val ? list1 : list2;
-  struct ListNode* cur = head;
-  while (list1 || list2) {
-    if (!list2 || list1 && list1->val < list2->val) {
-      cur->next = list1;
-      list1 = list1->next;
-    } else {
-      cur->next = list2;
-      list2 = list2->next;
-    }
-    cur = cur->next;
-  }
-  return head;
-}
-
-struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2){
-  if (!list1) return list2;
-  if (!list2) return list1;
   if (list1->val < list2->val) {
     list1->next = mergeTwoLists(list1->next, list2);
     return list1;
@@ -57,4 +39,13 @@ struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2){
     list2->next = mergeTwoLists(list1, list2->next);
     return list2;
   }
+}
+
+// 83
+struct ListNode* deleteDuplicates(struct ListNode* head){
+  if (!head || !head->next) return head;
+  if (head->val == head->next->val)
+    return deleteDuplicates(head->next);
+  head->next = deleteDuplicates(head->next);
+  return head;
 }

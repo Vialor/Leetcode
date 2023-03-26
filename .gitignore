@@ -1,3 +1,7 @@
 test.py
 __pycache__
+
+test.c
+*.exe
+
 .DS_Store

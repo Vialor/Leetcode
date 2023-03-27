@@ -6,7 +6,7 @@ struct ListNode {
   struct ListNode *next;
 };
 
-// 160
+// 160*
 struct ListNode *getIntersectionNode(struct ListNode *headA, struct ListNode *headB) {
   struct ListNode *a = headA, *b = headB;
   while (a != b) {

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 
 class ListNode:
@@ -87,3 +87,34 @@ class Solution:
                 return False
             head, tail = head.next, tail.next
         return True
+
+    # 725
+    def splitListToParts(self, head: Optional[ListNode], k: int) -> List[Optional[ListNode]]:
+        length = 0
+        cur = head
+        while cur:
+            length += 1
+            cur = cur.next
+
+        shortLength = length // k
+        longLength = shortLength + 1
+        longNumber = length % k
+
+        def isBreakPoint(n: int) -> bool:
+            if n <= longLength * longNumber:
+                return n % longLength == 0
+            else:
+                return (n - longLength * longNumber) % shortLength == 0
+
+        result = []
+        count = 0
+        cur, curNext = ListNode(next=head), head
+        while curNext:
+            if isBreakPoint(count):
+                cur.next = None
+                result.append(curNext)
+            count += 1
+            cur, curNext = curNext, curNext.next
+        while len(result) < k:
+            result.append(None)
+        return result

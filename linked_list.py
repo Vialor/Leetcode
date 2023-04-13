@@ -63,7 +63,7 @@ class Solution:
         return result.next
 
     # 234
-    # time: O(N), space: O(1)
+    # time: O(n), space: O(1)
     def isPalindrome(self, head: Optional[ListNode]) -> bool:
         slow, fast = head, head
         while fast.next and fast.next.next:
@@ -118,3 +118,17 @@ class Solution:
         while len(result) < k:
             result.append(None)
         return result
+
+    # 328
+    def oddEvenList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head:
+            return head
+        oddCur, evenCur = head, head.next
+        evenHead = evenCur
+        while oddCur.next and evenCur.next:
+            oddCur.next = oddCur.next.next
+            evenCur.next = evenCur.next.next
+            oddCur = oddCur.next
+            evenCur = evenCur.next
+        oddCur.next = evenHead
+        return head

@@ -125,7 +125,7 @@ class Solution:
                     LIS[i] = max(LIS[i], LIS[j] + 1)
         return max(LIS)
 
-    # 300* bisect method (this method is really sophisticated and also quicker O(Nlog(N)))
+    # 300* bisect method (this method is really sophisticated and also quicker O(nlog(n)))
     # def lengthOfLIS(self, nums: List[int]) -> int:
     #   LIS = []
     #   for num in nums:

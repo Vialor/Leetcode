@@ -150,3 +150,30 @@ class Solution:
             b += 1
         nums = nums[:a]
         return a
+
+    # 18
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        nums.sort()
+        result = []
+        length = len(nums)
+        for a in range(length):
+            if a > 0 and nums[a] == nums[a - 1]:
+                continue
+            for b in range(a + 1, length):
+                if b > a + 1 and nums[b] == nums[b - 1]:
+                    continue
+                i, j = b + 1, length - 1
+                while i < j:
+                    if nums[a] + nums[b] + nums[i] + nums[j] < target:
+                        i += 1
+                    elif nums[a] + nums[b] + nums[i] + nums[j] > target:
+                        j -= 1
+                    else:
+                        result.append([nums[a], nums[b], nums[i], nums[j]])
+                        while i < j and nums[i] == nums[i + 1]:
+                            i += 1
+                        i += 1
+                        while i < j and nums[j] == nums[j - 1]:
+                            j -= 1
+                        j -= 1
+        return result

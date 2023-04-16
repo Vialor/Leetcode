@@ -627,3 +627,19 @@ class Solution:
 
         DFS(0)
         return result
+
+    # 22*
+    def generateParenthesis(self, n: int) -> List[str]:
+        result = []
+
+        def DFS(path: str, leftParenthesisNum: int, rightParenthesisNum: int):
+            if leftParenthesisNum < rightParenthesisNum or leftParenthesisNum > n:
+                return
+            if rightParenthesisNum == n:
+                result.append(path)
+                return
+            DFS(path + "(", leftParenthesisNum + 1, rightParenthesisNum)
+            DFS(path + ")", leftParenthesisNum, rightParenthesisNum + 1)
+
+        DFS("", 0, 0)
+        return result

@@ -68,3 +68,57 @@ class Solution:
         if not root.left and not root.right:
             return targetSum == root.val
         return self.hasPathSum(root.left, targetSum - root.val) or self.hasPathSum(root.right, targetSum - root.val)
+
+    # 437
+    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> int:
+        if not root:
+            return 0
+
+        def pathSumWithRoot(curNode: Optional[TreeNode], targetSum: int) -> int:
+            if not curNode:
+                return 0
+            return (
+                pathSumWithRoot(curNode.left, targetSum - curNode.val)
+                + pathSumWithRoot(curNode.right, targetSum - curNode.val)
+                + (1 if curNode.val == targetSum else 0)
+            )
+
+        return (
+            self.pathSum(root.left, targetSum)
+            + self.pathSum(root.right, targetSum)
+            + pathSumWithRoot(root.left, targetSum - root.val)
+            + pathSumWithRoot(root.right, targetSum - root.val)
+            + (1 if root.val == targetSum else 0)
+        )
+
+    # 572*
+    def isSubtree(self, root: Optional[TreeNode], subRoot: Optional[TreeNode]) -> bool:
+        def isSameTree(tree1, tree2):
+            if not tree1 and not tree2:
+                return True
+            if not tree1 or not tree2:
+                return False
+            return (
+                tree1.val == tree2.val and isSameTree(tree1.left, tree2.left) and isSameTree(tree1.right, tree2.right)
+            )
+
+        if not root:
+            return subRoot is None
+        return self.isSubtree(root.left, subRoot) or self.isSubtree(root.right, subRoot) or isSameTree(root, subRoot)
+
+    # 101
+    def isSymmetric(self, root: Optional[TreeNode]) -> bool:
+        def isMirrorTree(tree1, tree2):
+            if not tree1 and not tree2:
+                return True
+            if not tree1 or not tree2:
+                return False
+            return (
+                tree1.val == tree2.val
+                and isMirrorTree(tree1.left, tree2.right)
+                and isMirrorTree(tree1.right, tree2.left)
+            )
+
+        if not root:
+            return True
+        return isMirrorTree(root.left, root.right)

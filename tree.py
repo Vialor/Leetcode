@@ -122,3 +122,19 @@ class Solution:
         if not root:
             return True
         return isMirrorTree(root.left, root.right)
+
+    # 687*
+    def longestUnivaluePath(self, root: Optional[TreeNode]) -> int:
+        self.pathLength = 0
+
+        def DFS(node):
+            if not node:
+                return 0
+            leftUnivalueHeight, rightUnivalueHeight = DFS(node.left), DFS(node.right)
+            leftUnivalueHeight = leftUnivalueHeight + 1 if node.left and node.left.val == node.val else 0
+            rightUnivalueHeight = rightUnivalueHeight + 1 if node.right and node.right.val == node.val else 0
+            self.pathLength = max(self.pathLength, leftUnivalueHeight + rightUnivalueHeight)
+            return max(leftUnivalueHeight, rightUnivalueHeight)
+
+        DFS(root)
+        return self.pathLength

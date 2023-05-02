@@ -1,6 +1,7 @@
 import collections
 import copy
 import math
+from statistics import mean
 from typing import List, Optional, Set, Tuple
 
 # 212
@@ -112,6 +113,24 @@ class Solution:
                     return length
             length += 1
         return 0
+
+    # 637
+    def averageOfLevels(self, root: Optional[TreeNode]) -> List[float]:
+        if not root:
+            return []
+        result = []
+        valsOnLevel = []
+        stash, nextStash = [root], []
+        while stash:
+            for node in stash:
+                valsOnLevel.append(node.val)
+                if node.left:
+                    nextStash.append(node.left)
+                if node.right:
+                    nextStash.append(node.right)
+            result.append(mean(valsOnLevel))
+            stash, nextStash, valsOnLevel = nextStash, [], []
+        return result
 
     # DFS
     # 695

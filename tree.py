@@ -1,3 +1,4 @@
+from functools import cache
 from typing import Optional
 
 
@@ -138,3 +139,16 @@ class Solution:
 
         DFS(root)
         return self.pathLength
+
+    @cache
+    def rob(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+
+        robWithoutRoot = self.rob(root.left) + self.rob(root.right)
+
+        robWithRoot = root.val
+        robWithRoot += self.rob(root.left.left) + self.rob(root.left.right) if root.left else 0
+        robWithRoot += self.rob(root.right.left) + self.rob(root.right.right) if root.right else 0
+
+        return max(robWithRoot, robWithoutRoot)

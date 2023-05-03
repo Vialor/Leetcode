@@ -152,3 +152,38 @@ class Solution:
         robWithRoot += self.rob(root.right.left) + self.rob(root.right.right) if root.right else 0
 
         return max(robWithRoot, robWithoutRoot)
+
+    # 669*
+    def trimBST(self, root: Optional[TreeNode], low: int, high: int) -> Optional[TreeNode]:
+        def trim(node):
+            return self.trimBST(node, low, high)
+
+        if root is None:
+            return root
+        if low > root.val:
+            return trim(root.right)
+        if high < root.val:
+            return trim(root.left)
+        root.left = trim(root.left)
+        root.right = trim(root.right)
+        return root
+
+    # 230
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+        self.count = 0
+
+        def DFS(node):
+            if node is None:
+                return -1
+            left = DFS(node.left)
+            if left != -1:
+                return left
+            self.count += 1
+            if self.count == k:
+                return node.val
+            right = DFS(node.right)
+            if right != -1:
+                return right
+            return -1
+
+        return DFS(root)

@@ -1,5 +1,5 @@
 from functools import cache
-from typing import Optional
+from typing import Optional, List
 
 
 class TreeNode:
@@ -10,6 +10,7 @@ class TreeNode:
 
 
 class Solution:
+    # A. RECURSION
     # 104*
     # not dp-optimized
     def maxDepth(self, root: Optional[TreeNode]) -> int:
@@ -168,6 +169,19 @@ class Solution:
         root.right = trim(root.right)
         return root
 
+    # 235*
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        if root in (None, p, q):
+            return root
+        left = self.lowestCommonAncestor(root.left, p, q)
+        right = self.lowestCommonAncestor(root.right, p, q)
+        if left is None:
+            return right
+        if right is None:
+            return left
+        return root
+
+    # B. BST
     # 230
     def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
         self.count = 0
@@ -187,3 +201,38 @@ class Solution:
             return -1
 
         return DFS(root)
+
+    # 538
+    def convertBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        self.curSum = 0
+
+        def DFS(node):
+            if not node:
+                return
+            DFS(node.right)
+            node.val += self.curSum
+            self.curSum = node.val
+            DFS(node.left)
+
+        DFS(root)
+        return root
+
+    # 108*
+    # O(nlog(n))
+    # def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+    #     if len(nums) == 0:
+    #         return None
+    #     mid = len(nums) // 2
+    #     return TreeNode(
+    #         val=nums[mid], left=self.sortedArrayToBST(nums[:mid]), right=self.sortedArrayToBST(nums[mid + 1 :])
+    #     )
+    # This solution creates new lists for nums[:mid] and nums[mid + 1 :] and hence has complexity O(nlog(n))
+    # O(n)
+    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+        def toBSTHelper(start, end):
+            if start > end:
+                return None
+            mid = (start + end) // 2
+            return TreeNode(val=nums[mid], left=toBSTHelper(start, mid - 1), right=toBSTHelper(mid + 1, end))
+
+        return toBSTHelper(0, len(nums) - 1)

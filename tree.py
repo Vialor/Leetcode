@@ -9,6 +9,12 @@ class TreeNode:
         self.right = right
 
 
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
 class Solution:
     # A. RECURSION
     # 104*
@@ -236,3 +242,23 @@ class Solution:
             return TreeNode(val=nums[mid], left=toBSTHelper(start, mid - 1), right=toBSTHelper(mid + 1, end))
 
         return toBSTHelper(0, len(nums) - 1)
+
+    # 109*
+    # Without converting into an array, which is O(n) whereas this one is O(nlog(n))
+    def findPreMid(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        slow, fast, preMid = head, head, head
+        while fast and fast.next:
+            preMid = slow
+            slow = slow.next
+            fast = fast.next.next
+        return preMid
+
+    def sortedListToBST(self, head: Optional[ListNode]) -> Optional[TreeNode]:
+        preMid = self.findPreMid(head)
+        if not preMid:
+            return None
+        mid = preMid.next
+        if not mid:
+            return TreeNode(val=preMid.val)
+        preMid.next = None
+        return TreeNode(val=mid.val, left=self.sortedListToBST(head), right=self.sortedListToBST(mid.next))

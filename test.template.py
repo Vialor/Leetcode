@@ -21,11 +21,6 @@ def createLinkedList(array: List) -> Optional[ListNode]:
         return None
     return ListNode(val=array[0], next=createLinkedList(array[1:]))
 
-def createBinaryTree(array: List) -> Optional[TreeNode]:
-    if len(array) == 0:
-        return None
-    mid = len(array)
-    return TreeNode(val=array[0], next=createBinaryTree(array[1:]))
 
 # from _ import Solution
 # solution = Solution()

@@ -262,3 +262,94 @@ class Solution:
             return TreeNode(val=preMid.val)
         preMid.next = None
         return TreeNode(val=mid.val, left=self.sortedListToBST(head), right=self.sortedListToBST(mid.next))
+
+    # 653
+    def findTarget(self, root: Optional[TreeNode], k: int) -> bool:
+        self.nums = []
+
+        def inOrder(node):
+            if node is None:
+                return
+            inOrder(node.left)
+            self.nums.append(node.val)
+            inOrder(node.right)
+
+        inOrder(root)
+
+        low, high = 0, len(self.nums) - 1
+        while low < high:
+            if self.nums[low] + self.nums[high] < k:
+                low += 1
+            elif self.nums[low] + self.nums[high] > k:
+                high -= 1
+            else:
+                return True
+        return False
+
+    # 530
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        self.minimumDifference, self.lastVal = float("inf"), None
+
+        def inOrder(node):
+            if node is None:
+                return
+            inOrder(node.left)
+            if self.lastVal is not None:
+                self.minimumDifference = min(self.minimumDifference, node.val - self.lastVal)
+            self.lastVal = node.val
+            inOrder(node.right)
+
+        inOrder(root)
+        return self.minimumDifference
+
+    # 501
+    # iterative method 1
+    def findMode(self, root: Optional[TreeNode]) -> List[int]:
+        result, mostFrequency = [], 0
+        curVal, curFrequency = None, 0
+        stack = [root]
+        while stack:
+            curNode = stack.pop()
+            if curNode is None:
+                continue
+            stack.append(curNode.right)
+            while curNode.left:
+                stack.append(curNode.left)
+                curNode = curNode.left
+
+            if curNode.val == curVal:
+                curFrequency += 1
+            else:
+                curFrequency = 1
+                curVal = curNode.val
+            if curFrequency > mostFrequency:
+                mostFrequency = curFrequency
+                result = [curNode.val]
+            elif curFrequency == mostFrequency:
+                result.append(curNode.val)
+        return result
+
+    # iterative method 2
+    def findMode(self, root: Optional[TreeNode]) -> List[int]:
+        result, mostFrequency = [], 0
+        curVal, curFrequency = None, 0
+        stack = []
+        while True:
+            while root:
+                stack.append(root)
+                root = root.left
+            if not stack:
+                return result
+            curNode = stack.pop()
+            root = curNode.right
+
+            if curNode.val == curVal:
+                curFrequency += 1
+            else:
+                curFrequency = 1
+                curVal = curNode.val
+            if curFrequency > mostFrequency:
+                mostFrequency = curFrequency
+                result = [curNode.val]
+            elif curFrequency == mostFrequency:
+                result.append(curNode.val)

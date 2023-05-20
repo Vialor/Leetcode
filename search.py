@@ -4,37 +4,6 @@ import math
 from statistics import mean
 from typing import List, Optional, Set, Tuple
 
-# 212
-
-
-class TrieNode:
-    def __init__(self, parent=None):
-        self.children = {}
-        self.isEnd = False
-        self.parent = parent
-
-    def addWord(self, word: str):
-        cur = self
-        for c in word:
-            if c not in cur.children:
-                cur.children[c] = TrieNode(cur)
-            cur = cur.children[c]
-        cur.isEnd = True
-
-    def removeWord(self, word):
-        self.isEnd = False
-        cur = self
-        while cur and word:
-            if len(cur.children) > 0:
-                break
-            else:
-                cur = cur.parent
-                last, word = word[-1], word[:-1]
-                del cur.children[last]
-
-
-# 257
-
 
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):

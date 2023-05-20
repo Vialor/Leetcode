@@ -353,3 +353,104 @@ class Solution:
                 result = [curNode.val]
             elif curFrequency == mostFrequency:
                 result.append(curNode.val)
+
+    # C. TRIE
+    # 208
+
+
+class TrieNode:
+    def __init__(self):
+        self.word = False
+        self.children = {}
+
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word: str) -> None:
+        node = self.root
+        for i in word:
+            if i not in node.children:
+                node.children[i] = TrieNode()
+            node = node.children[i]
+        node.word = True
+
+    def search(self, word: str) -> bool:
+        node = self.root
+        for i in word:
+            if i in node.children:
+                node = node.children[i]
+            else:
+                return False
+        return node.word
+
+    def startsWith(self, prefix: str) -> bool:
+        node = self.root
+        for i in prefix:
+            if i in node.children:
+                node = node.children[i]
+            else:
+                return False
+        return True
+
+    # 212
+
+
+class TrieNode:
+    def __init__(self, parent=None):
+        self.children = {}
+        self.isEnd = False
+        self.parent = parent
+
+    def addWord(self, word: str):
+        cur = self
+        for c in word:
+            if c not in cur.children:
+                cur.children[c] = TrieNode(cur)
+            cur = cur.children[c]
+        cur.isEnd = True
+
+    def removeWord(self, word):
+        self.isEnd = False
+        cur = self
+        while cur and word:
+            if len(cur.children) > 0:
+                break
+            else:
+                cur = cur.parent
+                last, word = word[-1], word[:-1]
+                del cur.children[last]
+
+    # 677
+
+
+class MapSum:
+    def __init__(self):
+        self.trie = self.TrieNode()
+        self.wordMap = {}
+
+    class TrieNode:
+        def __init__(self):
+            self.val = 0
+            self.children = {}
+
+    def insert(self, key: str, val: int) -> None:
+        diff = val - self.wordMap.get(key, 0)
+        self.wordMap[key] = val
+
+        curTrieNode = self.trie
+        curTrieNode.val += diff
+        for letter in key:
+            if letter not in curTrieNode.children:
+                curTrieNode.children[letter] = self.TrieNode()
+            curTrieNode = curTrieNode.children[letter]
+            curTrieNode.val += diff
+
+    def sum(self, prefix: str) -> int:
+        curTrieNode = self.trie
+        for letter in prefix:
+            if letter not in curTrieNode.children:
+                return 0
+            curTrieNode = curTrieNode.children[letter]
+        return curTrieNode.val

@@ -1,8 +1,77 @@
+import collections
 import math
 from typing import List, Optional
 
 
 class Solution:
+    # 232
+    class MyQueue:
+        def __init__(self):
+            self.inStack = []
+            self.outStack = []
+
+        def push(self, x: int) -> None:
+            self.inStack.append(x)
+
+        def inStackToOutStack(self) -> None:
+            while self.inStack:
+                self.outStack.append(self.inStack.pop())
+
+        def pop(self) -> int:
+            if not self.outStack:
+                self.inStackToOutStack()
+            return self.outStack.pop()
+
+        def peek(self) -> int:
+            if not self.outStack:
+                self.inStackToOutStack()
+            return self.outStack[-1]
+
+        def empty(self) -> bool:
+            return not self.inStack and not self.outStack
+
+    # 225
+    class MyStack:
+        def __init__(self):
+            self.queue = collections.deque()
+
+        def push(self, x: int) -> None:
+            count = len(self.queue)
+            self.queue.append(x)
+            while count:
+                self.queue.append(self.queue.popleft)
+                count -= 1
+
+        def pop(self) -> int:
+            return self.queue.popleft()
+
+        def top(self) -> int:
+            return self.queue[0]
+
+        def empty(self) -> bool:
+            return not self.queue
+
+    # 155
+    class MinStack:
+        def __init__(self):
+            self.dataStack = []
+            self.minStack = []
+
+        def push(self, val: int) -> None:
+            self.dataStack.append(val)
+            minVal = min(self.minStack[-1], val) if self.minStack else val
+            self.minStack.append(minVal)
+
+        def pop(self) -> None:
+            self.dataStack.pop()
+            self.minStack.pop()
+
+        def top(self) -> int:
+            return self.dataStack[-1]
+
+        def getMin(self) -> int:
+            return self.minStack[-1]
+
     # monotonic stack
     # 496
     def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:

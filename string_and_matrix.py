@@ -78,7 +78,14 @@ class Solution:
                 high = mid
         return low
 
-    # 645
+    # 287
+    def findDuplicate(self, nums: List[int]) -> int:
+        for i in range(len(nums)):
+            while nums[i] != i + 1 and nums[i] != nums[nums[i] - 1]:
+                nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+        return nums[-1]
+
+    # 645*
     def findErrorNums(self, nums: List[int]) -> List[int]:  # time: O(n), space: O(1)
         # O(n) sort
         for i in range(len(nums)):
@@ -89,3 +96,23 @@ class Solution:
             if nums[i] != i + 1:
                 return [nums[i], i + 1]
         return [-1, -1]
+
+    # 667
+    def constructArray(self, n: int, k: int) -> List[int]:
+        result = [i for i in range(1, n - k + 1)]
+        operation = 1
+        for i in range(k, 0, -1):
+            result.append(result[-1] + operation * i)
+            operation = -operation
+        return result
+
+    # 565
+    def arrayNesting(self, nums: List[int]) -> int:
+        maxCount = 0
+        for i in range(len(nums)):
+            count = 0
+            while nums[i] != -1:
+                nums[i], i = -1, nums[i]
+                count += 1
+            maxCount = max(count, maxCount)
+        return maxCount

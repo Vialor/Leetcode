@@ -76,3 +76,26 @@ class Solution:
                 ans += cntDict[k] - 1
                 hasOdd = True
         return ans + 1 if hasOdd else ans
+
+    # 697
+    def findShortestSubArray(self, nums: List[int]) -> int:
+        frequencyMap = {}
+        firstIndex, lastIndex = {}, {}
+        for i in range(len(nums)):
+            num = nums[i]
+            if num not in firstIndex:
+                firstIndex[num] = i
+            lastIndex[num] = i
+            frequencyMap[num] = frequencyMap[num] + 1 if num in frequencyMap else 1
+
+        maxFrequencyNum, shortestLength = None, 0
+        for num in nums:
+            if (
+                maxFrequencyNum is None
+                or frequencyMap[maxFrequencyNum] < frequencyMap[num]
+                or frequencyMap[maxFrequencyNum] == frequencyMap[num]
+                and shortestLength > lastIndex[num] - firstIndex[num] + 1
+            ):
+                maxFrequencyNum = num
+                shortestLength = lastIndex[num] - firstIndex[num] + 1
+        return shortestLength

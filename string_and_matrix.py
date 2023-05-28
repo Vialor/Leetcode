@@ -116,3 +116,13 @@ class Solution:
                 count += 1
             maxCount = max(count, maxCount)
         return maxCount
+
+    # 769
+    def maxChunksToSorted(self, arr: List[int]) -> int:
+        maxSoFar = 0
+        count = 0
+        for i in range(len(arr)):
+            maxSoFar = max(maxSoFar, arr[i])
+            if maxSoFar <= i:
+                count += 1
+        return count

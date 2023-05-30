@@ -1,4 +1,5 @@
 import math
+import random
 from typing import List, Optional
 
 
@@ -24,6 +25,30 @@ class Solution:
 
         l, h = 0, len(nums)
         return partition(nums, l, h)
+
+    # 462
+    def minMoves2(self, nums: List[int]) -> int:
+        def quickSelect(low, high) -> int:
+            pivot = random.randint(low, high)
+            nums[high], nums[pivot] = nums[pivot], nums[high]
+            curInd = low
+            for i in range(low, high):
+                if nums[i] < nums[high]:
+                    nums[curInd], nums[i] = nums[i], nums[curInd]
+                    curInd += 1
+            nums[high], nums[curInd] = nums[curInd], nums[high]
+
+            if curInd == midLen:
+                return nums[curInd]
+            elif curInd > midLen:
+                return quickSelect(low, curInd - 1)
+            else:
+                return quickSelect(curInd + 1, high)
+
+        midLen = len(nums) // 2
+        medium = quickSelect(0, len(nums) - 1)
+        ans = reduce(lambda last, num: last + abs(num - medium), nums, 0)
+        return ans
 
     # 347*
     # bucket sort O(n)

@@ -1,3 +1,4 @@
+from functools import reduce
 import math
 import random
 from typing import List, Optional

@@ -126,3 +126,14 @@ class Solution:
             if maxSoFar <= i:
                 count += 1
         return count
+
+    # 169*
+    # Boyer-Moore Majority Vote Algorithm
+    def majorityElement(self, nums: List[int]) -> int:
+        vote = 0
+        candidate = nums[0]
+        for num in nums:
+            if vote <= 0:
+                candidate = num
+            vote = vote + 1 if candidate == num else vote - 1
+        return candidate

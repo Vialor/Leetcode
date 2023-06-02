@@ -333,3 +333,13 @@ class Solution:
                     dp[i] = dp[divider] + dp[i // divider]
                     break
         return dp[n]
+
+    # 152
+    def maxProduct(self, nums: List[int]) -> int:
+        minProduct, maxProduct, ans = nums[0], nums[0], nums[0]
+        for num in nums[1:]:
+            minProduct, maxProduct = min(minProduct * num, maxProduct * num, num), max(
+                minProduct * num, maxProduct * num, num
+            )
+            ans = max(maxProduct, ans)
+        return ans

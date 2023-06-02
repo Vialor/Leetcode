@@ -120,3 +120,36 @@ class Solution:
             end = max(end, lastOccurences[s[i]] + 1)
             i += 1
         return [end] + self.partitionLabels(s[end:])
+
+    # 55
+    def canJump(self, nums: List[int]) -> bool:
+        smallestJumpableIndex = len(nums) - 1
+        for i in reversed(range(len(nums) - 1)):
+            if i + nums[i] >= smallestJumpableIndex:
+                smallestJumpableIndex = i
+        return smallestJumpableIndex == 0
+
+    # 45
+    def jump(self, nums: List[int]) -> int:
+        stepCount = 0
+        maxNextJump = 0
+        curMax = 0
+        for i in range(len(nums) - 1):
+            maxNextJump = max(maxNextJump, nums[i] + i)
+            if i == curMax:
+                curMax = maxNextJump
+                stepCount += 1
+        return stepCount
+
+    # 134
+    def canCompleteCircuit(self, gas: List[int], cost: List[int]) -> int:
+        if sum(gas) < sum(cost):
+            return -1
+        startIndex, stationNum = 0, len(gas)
+        balance = 0
+        for i in range(stationNum):
+            balance = balance + gas[i] - cost[i]
+            if balance < 0:
+                balance = 0
+                startIndex = i + 1
+        return startIndex

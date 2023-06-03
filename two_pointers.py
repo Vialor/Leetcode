@@ -3,6 +3,7 @@ from typing import List, Optional
 
 
 class Solution:
+    # High & Low
     # 167*
     def twoSum(self, numbers: List[int], target: int) -> List[int]:
         a, b = 1, len(numbers)
@@ -65,20 +66,6 @@ class Solution:
                 nums1[indexMerge] = nums1[index1]
                 index1 -= 1
             indexMerge -= 1
-
-    # 141*
-    class ListNode:
-        def __init__(self):
-            self.next = None
-
-    def hasCycle(self, head: Optional[ListNode]) -> bool:
-        fast, slow = head.next, head
-        while slow != None and fast != None and fast.next != None:
-            if fast == slow:
-                return True
-            fast = fast.next.next
-            slow = slow.next
-        return False
 
     # 524
     def findLongestWord(self, s: str, dictionary: List[str]) -> str:
@@ -193,3 +180,90 @@ class Solution:
                 res += rmax - height[r]
                 r -= 1
         return res
+
+    # Fast & Slow
+    # 1004*
+    def longestOnes(self, nums: List[int], k: int) -> int:
+        slow = 0
+        ans = 0
+        for fast in range(len(nums)):
+            if nums[fast] == 0:
+                k -= 1
+            while k < 0:
+                if nums[slow] == 0:
+                    k += 1
+                slow += 1
+            ans = max(ans, fast - slow + 1)
+        return ans
+
+    # 1493
+    def longestSubarray(self, nums: List[int]) -> int:
+        deleteCapacity = 1
+        ans = 0
+        slow = 0
+        for fast in range(len(nums)):
+            if nums[fast] == 0:
+                deleteCapacity -= 1
+            while deleteCapacity < 0:
+                if nums[slow] == 0:
+                    deleteCapacity += 1
+                slow += 1
+            ans = max(ans, fast - slow)
+        return ans
+
+    # 209
+    def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+        if sum(nums) < target:
+            return 0
+        curSum = 0
+        slow = 0
+        minLen = len(nums)
+        for fast in range(len(nums)):
+            curSum += nums[fast]
+            while True:
+                if curSum - nums[slow] < target:
+                    break
+                curSum -= nums[slow]
+                slow += 1
+            if curSum >= target:
+                minLen = min(minLen, fast - slow + 1)
+        return minLen
+
+    # 76*
+    def minWindow(self, s: str, t: str) -> str:
+        needEach, needTotal = {}, len(t)  # the number of chars of t that are not included in s[slow : fast + 1]
+        for c in t:
+            needEach[c] = needEach.get(c, 0) + 1
+
+        ans, ansSize = "", float("inf")
+        slow = 0
+        for fast in range(len(s)):
+            if s[fast] not in needEach:
+                continue
+            needEach[s[fast]] -= 1
+            if needEach[s[fast]] >= 0:
+                needTotal -= 1
+            while s[slow] not in needEach or needEach[s[slow]] < 0:
+                if s[slow] in needEach:
+                    needEach[s[slow]] += 1
+                    if needEach[s[slow]] > 0:
+                        needTotal += 1
+                slow += 1
+            if needTotal == 0 and fast - slow + 1 < ansSize:
+                ans = s[slow : fast + 1]
+                ansSize = fast - slow + 1
+        return ans
+
+    # 141*
+    class ListNode:
+        def __init__(self):
+            self.next = None
+
+    def hasCycle(self, head: Optional[ListNode]) -> bool:
+        fast, slow = head.next, head
+        while slow != None and fast != None and fast.next != None:
+            if fast == slow:
+                return True
+            fast = fast.next.next
+            slow = slow.next
+        return False

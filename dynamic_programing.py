@@ -169,6 +169,16 @@ class Solution:
                 down = up + 1
         return max(up, down)
 
+    def findLength(self, nums1: List[int], nums2: List[int]) -> int:
+        dp = [[0] * (len(nums2) + 1) for i in range(len(nums1) + 1)]
+        maxLen = 0
+        for i in range(len(nums1)):
+            for j in range(len(nums2)):
+                if nums1[i] == nums2[j]:
+                    dp[i + 1][j + 1] = dp[i][j] + 1
+                maxLen = max(maxLen, dp[i + 1][j + 1])
+        return maxLen
+
     # B. 0-1 KNAPSACK
     # 416* 2D
     # def canPartition(self, nums: List[int]) -> bool:

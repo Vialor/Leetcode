@@ -99,3 +99,16 @@ class Solution:
                 maxFrequencyNum = num
                 shortestLength = lastIndex[num] - firstIndex[num] + 1
         return shortestLength
+
+    # 49
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        groupDict = {}
+        for s in strs:
+            category = "".join(sorted(s))
+            if category not in groupDict:
+                groupDict[category] = []
+            groupDict[category].append(s)
+        ans = []
+        for v in groupDict.values():
+            ans.append(v)
+        return ans

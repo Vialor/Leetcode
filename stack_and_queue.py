@@ -30,6 +30,19 @@ class Solution:
         def empty(self) -> bool:
             return not self.inStack and not self.outStack
 
+    # 239*
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        queue = collections.deque()
+        ans = []
+        for i in range(len(nums)):
+            if i - k >= 0 and queue[0] == i - k:
+                queue.popleft()
+            while queue and nums[queue[-1]] < nums[i]:
+                queue.pop()
+            queue.append(i)
+            ans.append(nums[queue[0]])
+        return ans[k - 1 :]
+
     # 225
     class MyStack:
         def __init__(self):

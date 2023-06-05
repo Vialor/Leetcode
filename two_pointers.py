@@ -1,3 +1,4 @@
+from collections import Counter
 import math
 from typing import List, Optional
 
@@ -220,21 +221,15 @@ class Solution:
         minLen = len(nums)
         for fast in range(len(nums)):
             curSum += nums[fast]
-            while True:
-                if curSum - nums[slow] < target:
-                    break
+            while curSum >= target:
+                minLen = min(minLen, fast - slow + 1)
                 curSum -= nums[slow]
                 slow += 1
-            if curSum >= target:
-                minLen = min(minLen, fast - slow + 1)
         return minLen
 
     # 76*
     def minWindow(self, s: str, t: str) -> str:
-        needEach, needTotal = {}, len(t)  # the number of chars of t that are not included in s[slow : fast + 1]
-        for c in t:
-            needEach[c] = needEach.get(c, 0) + 1
-
+        needEach, needTotal = Counter(t), len(t)
         ans, ansSize = "", float("inf")
         slow = 0
         for fast in range(len(s)):
@@ -243,16 +238,43 @@ class Solution:
             needEach[s[fast]] -= 1
             if needEach[s[fast]] >= 0:
                 needTotal -= 1
-            while s[slow] not in needEach or needEach[s[slow]] < 0:
+            while needTotal == 0:
+                if fast - slow + 1 < ansSize:
+                    ans = s[slow : fast + 1]
+                    ansSize = fast - slow + 1
                 if s[slow] in needEach:
                     needEach[s[slow]] += 1
                     if needEach[s[slow]] > 0:
                         needTotal += 1
                 slow += 1
-            if needTotal == 0 and fast - slow + 1 < ansSize:
-                ans = s[slow : fast + 1]
-                ansSize = fast - slow + 1
         return ans
+
+    # 53
+    def maxSubArray(self, nums: List[int]) -> int:
+        curSum = 0
+        maxSum = nums[0]
+        for num in nums:
+            curSum += num
+            maxSum = max(curSum, maxSum)
+            if curSum < 0:
+                curSum = 0
+        return maxSum
+
+    # 567*
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        s1Counter, s1Len, need = Counter(s1), len(s1), len(s1)
+        for i in range(len(s2)):
+            if s2[i] in s1Counter:
+                s1Counter[s2[i]] -= 1
+                if s1Counter[s2[i]] >= 0:
+                    need -= 1
+            if i >= s1Len and s2[i - s1Len] in s1Counter:
+                s1Counter[s2[i - s1Len]] += 1
+                if s1Counter[s2[i - s1Len]] > 0:
+                    need += 1
+            if need == 0:
+                return True
+        return False
 
     # 141*
     class ListNode:

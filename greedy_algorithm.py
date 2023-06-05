@@ -99,17 +99,6 @@ class Solution:
                 sIndex += 1
         return sIndex == len(s)
 
-    # 53
-    def maxSubArray(self, nums: List[int]) -> int:
-        curSum = 0
-        maxSum = nums[0]
-        for num in nums:
-            curSum += num
-            maxSum = max(curSum, maxSum)
-            if curSum < 0:
-                curSum = 0
-        return maxSum
-
     # 763
     def partitionLabels(self, s: str) -> List[int]:
         if len(s) == 0:

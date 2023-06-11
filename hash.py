@@ -134,3 +134,25 @@ class Solution:
             ans += preSumsCounter[preSum - k]
             preSumsCounter[preSum] += 1
         return ans
+
+    # 930
+    def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:
+        preSumsCount = defaultdict(int)
+        curSum = 0
+        count = 0
+        for num in nums:
+            preSumsCount[curSum] += 1
+            curSum += num
+            count += preSumsCount[curSum - goal]
+        return count
+
+    # 1248
+    def numberOfSubarrays(self, nums: List[int], k: int) -> int:
+        nums = [num % 2 for num in nums]
+        curSum, preSumsCount = 0, defaultdict(int)
+        ans = 0
+        for num in nums:
+            preSumsCount[curSum] += 1
+            curSum += num
+            ans += preSumsCount[curSum - k]
+        return ans

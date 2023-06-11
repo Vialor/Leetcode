@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 import math
 from typing import List, Optional
 
@@ -190,7 +190,7 @@ class Solution:
         for fast in range(len(nums)):
             if nums[fast] == 0:
                 k -= 1
-            while k < 0:
+            if k < 0:
                 if nums[slow] == 0:
                     k += 1
                 slow += 1
@@ -205,7 +205,7 @@ class Solution:
         for fast in range(len(nums)):
             if nums[fast] == 0:
                 deleteCapacity -= 1
-            while deleteCapacity < 0:
+            if deleteCapacity < 0:
                 if nums[slow] == 0:
                     deleteCapacity += 1
                 slow += 1
@@ -275,6 +275,54 @@ class Solution:
             if need == 0:
                 return True
         return False
+
+    # 424*
+    # popular solution:
+    # def characterReplacement(self, s: str, k: int) -> int:
+    #     countDict, mostFrequency = defaultdict(int), 0
+    #     # mostFrequency the most frequncy UP TILL the current window
+    #     maxLen = 0
+    #     slow = 0
+    #     for fast in range(len(s)):
+    #         countDict[s[fast]] += 1
+    #         mostFrequency = max(mostFrequency, countDict[s[fast]])
+    #         if k + mostFrequency < fast - slow + 1:
+    #             countDict[s[slow]] -= 1
+    #             slow += 1
+    #         maxLen = max(fast - slow + 1, maxLen)
+    #     return maxLen
+    # My version, same complexity, but easier to understand:
+    def characterReplacement(self, s: str, k: int) -> int:
+        countDict, mostFrequency = defaultdict(int), 0
+        # mostFrequency: the most frequncy UP TILL the current window
+        slow = 0
+        for fast in range(len(s)):
+            countDict[s[fast]] += 1
+            if mostFrequency < countDict[s[fast]]:
+                mostFrequency = countDict[s[fast]]
+            elif k > 0:
+                k -= 1
+            else:
+                countDict[s[slow]] -= 1
+                slow += 1
+        return fast - slow + 1
+
+    # 1248*
+    def numberOfSubarrays(self, nums: List[int], k: int) -> int:
+        left, right = 0, 0
+        count = 0
+        leftChoices = 0
+        for right in range(len(nums)):
+            if nums[right] % 2 == 1:
+                k -= 1
+                leftChoices = 0
+            while k == 0:
+                leftChoices += 1
+                if nums[left] % 2 == 1:
+                    k += 1
+                left += 1
+            count += leftChoices
+        return count
 
     # 141*
     class ListNode:

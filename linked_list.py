@@ -132,3 +132,38 @@ class Solution:
             evenCur = evenCur.next
         oddCur.next = evenHead
         return head
+
+    # 143*
+    def reorderList(self, head: Optional[ListNode]) -> None:
+        if head is None:
+            return
+
+        # divide the list into halves
+        slow, fast = head, head
+        while fast.next and fast.next.next:
+            slow = slow.next
+            fast = fast.next.next
+        insertHead = slow.next
+        slow.next = None
+
+        # reverse the inserting list
+        anode = None
+        bnode = insertHead
+        while bnode:
+            cnode = bnode.next
+            bnode.next = anode
+            anode = bnode
+            bnode = cnode
+        insertHead = anode
+
+        # merge lists
+        cur = head
+        while insertHead:
+            curNext = cur.next
+            insertHeadNext = insertHead.next
+
+            cur.next = insertHead
+            insertHead.next = curNext
+
+            cur = curNext
+            insertHead = insertHeadNext

@@ -17,3 +17,16 @@ class Solution:
                 definitelyNotPrimes[cur] = True
                 cur += num
         return count
+
+    # 48
+    def rotate(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        n = len(matrix)
+        for i in range(ceil(n / 2)):
+            for j in range(floor(n / 2)):
+                curi, curj = i, j
+                for time in range(3):
+                    matrix[curi][curj], matrix[n - 1 - curj][curi] = matrix[n - 1 - curj][curi], matrix[curi][curj]
+                    curi, curj = n - 1 - curj, curi

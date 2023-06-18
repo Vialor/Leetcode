@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import Counter, defaultdict
 from typing import List
 
 
@@ -156,3 +156,16 @@ class Solution:
             curSum += num
             ans += preSumsCount[curSum - k]
         return ans
+
+    # 846
+    def isNStraightHand(self, hand: List[int], groupSize: int) -> bool:
+        hand.sort()
+        handCounter = Counter(hand)
+        for card in hand:
+            if handCounter[card] == 0:
+                continue
+            for i in range(groupSize):
+                if handCounter[card + i] < 1:
+                    return False
+                handCounter[card + i] -= 1
+        return True

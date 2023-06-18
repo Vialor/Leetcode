@@ -249,7 +249,7 @@ class Solution:
                 slow += 1
         return ans
 
-    # 53
+    # 53*
     def maxSubArray(self, nums: List[int]) -> int:
         curSum = 0
         maxSum = nums[0]

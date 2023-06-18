@@ -353,3 +353,16 @@ class Solution:
             )
             ans = max(maxProduct, ans)
         return ans
+
+    # 264
+    def nthUglyNumber(self, n: int) -> int:
+        uglyNums = [1]
+        states = [0, 0, 0]
+        factors = [2, 3, 5]
+        for count in range(1, n):
+            nextNum = min(uglyNums[states[0]] * 2, uglyNums[states[1]] * 3, uglyNums[states[2]] * 5)
+            uglyNums.append(nextNum)
+            states = [
+                states[i] + 1 if uglyNums[states[i]] * factors[i] == nextNum else states[i] for i in range(len(states))
+            ]
+        return uglyNums[-1]

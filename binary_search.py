@@ -76,3 +76,55 @@ class Solution:
                 high = mid - 1
         end = low
         return [start, end]
+
+    # 875
+    def minEatingSpeed(self, piles: List[int], h: int) -> int:
+        low, high = 1, max(piles)
+        minSpead = high
+        while low <= high:
+            mid = (high + low) // 2
+            eatTime = 0
+            for pile in piles:
+                eatTime += pile // mid
+                if pile % mid != 0:
+                    eatTime += 1
+            if eatTime <= h:
+                minSpead = min(minSpead, mid)
+                high = mid - 1
+            else:
+                low = mid + 1
+        return minSpead
+
+    # 74*
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        m, n = len(matrix), len(matrix[0])
+        low, high = 0, m * n - 1
+        while low <= high:
+            mid = (low + high) // 2
+            row, col = mid // n, mid % n
+            if matrix[row][col] < target:
+                low = mid + 1
+            elif matrix[row][col] > target:
+                high = mid - 1
+            else:
+                return True
+        return False
+
+    # 33
+    def search(self, nums: List[int], target: int) -> int:
+        low, high = 0, len(nums) - 1
+        targetOnLeft = target >= nums[0]
+        while low <= high:
+            mid = (low + high) // 2
+            if nums[mid] == target:
+                return mid
+            midOnLeft = nums[mid] >= nums[0]
+            if targetOnLeft and not midOnLeft:
+                high = mid - 1
+            elif not targetOnLeft and midOnLeft:
+                low = mid + 1
+            elif nums[mid] < target:
+                low = mid + 1
+            else:
+                high = mid - 1
+        return -1

@@ -1,4 +1,5 @@
 from functools import reduce
+import heapq
 import math
 import random
 from typing import List, Optional
@@ -96,3 +97,24 @@ class Solution:
             else:
                 nums[i], nums[twoLowerBound - 1] = nums[twoLowerBound - 1], nums[i]
                 twoLowerBound -= 1
+
+    # 324*
+    def wiggleSort(self, nums: List[int]) -> None:
+        # or quick select median
+        median = heapq.nlargest((len(nums) // 2) + 1, nums)[-1]
+
+        def indexMapping(i):
+            return (1 + 2 * i) % (len(nums) | 1)
+
+        # three way partitioning
+        low, mid, high = 0, 0, len(nums) - 1
+        while mid <= high:
+            if nums[indexMapping(mid)] == median:
+                mid += 1
+            elif nums[indexMapping(mid)] > median:
+                nums[indexMapping(mid)], nums[indexMapping(low)] = nums[indexMapping(low)], nums[indexMapping(mid)]
+                mid += 1
+                low += 1
+            else:
+                nums[indexMapping(mid)], nums[indexMapping(high)] = nums[indexMapping(high)], nums[indexMapping(mid)]
+                high -= 1

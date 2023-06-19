@@ -1,5 +1,12 @@
 from collections import Counter, defaultdict
-from typing import List
+from typing import List, Optional
+
+
+class Node:
+    def __init__(self, x: int, next: "Node" = None, random: "Node" = None):
+        self.val = int(x)
+        self.next = next
+        self.random = random
 
 
 class Solution:
@@ -169,3 +176,15 @@ class Solution:
                     return False
                 handCounter[card + i] -= 1
         return True
+
+    # 138
+    nodeMap = {None: None}
+
+    def copyRandomList(self, head: "Optional[Node]") -> "Optional[Node]":
+        if head in self.nodeMap:
+            return self.nodeMap[head]
+        newNode = Node(x=head.val)
+        self.nodeMap[head] = newNode
+        newNode.next = self.copyRandomList(head.next)
+        newNode.random = self.copyRandomList(head.random)
+        return self.nodeMap[head]

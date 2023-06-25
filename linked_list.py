@@ -37,6 +37,29 @@ class Solution:
             last = nodeA
         return preHead.next
 
+    # 25
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        preNode, postNode = ListNode(next=head), head
+        newHead = preNode
+        while True:
+            for i in range(k):
+                if postNode is None:
+                    return newHead.next
+                postNode = postNode.next
+
+            nodeA = postNode
+            nodeB = preNode.next
+            nextPreNode = preNode.next
+            nodeC = nodeB.next
+            while nodeB != postNode:
+                nodeB.next = nodeA
+                nodeA = nodeB
+                nodeB = nodeC
+                if nodeC:
+                    nodeC = nodeC.next
+            preNode.next = nodeA
+            preNode = nextPreNode
+
     # 445
     def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
         stack1, stack2 = [], []
@@ -133,6 +156,22 @@ class Solution:
         oddCur.next = evenHead
         return head
 
+    # 142
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if head is None:
+            return None
+        fast, slow = head, head
+        while fast and fast.next:
+            fast = fast.next.next
+            slow = slow.next
+            if fast == slow:
+                slow = head
+                while fast != slow:
+                    fast = fast.next
+                    slow = slow.next
+                return fast
+        return None
+
     # 143*
     def reorderList(self, head: Optional[ListNode]) -> None:
         if head is None:
@@ -167,3 +206,60 @@ class Solution:
 
             cur = curNext
             insertHead = insertHeadNext
+
+
+# 146
+class DoublyLinkedNode:
+    def __init__(self, key: int, val: int, prevNode=None, nextNode=None):
+        self.key = key
+        self.val = val
+        self.prev = prevNode
+        self.next = nextNode
+
+
+class LRUCache:
+    def __init__(self, capacity: int):
+        initialNode = DoublyLinkedNode(-1, -1)
+        self.capacity = capacity
+        self.occupied = 0
+        self.LRUListHead = initialNode
+        self.LRUListTail = initialNode
+        self.mapping = {}
+
+    def moveToMostRecent(self, node: DoublyLinkedNode):
+        if node == self.LRUListTail:
+            return
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        self.LRUListTail.next = node
+        node.prev = self.LRUListTail
+        node.next = None
+        self.LRUListTail = node
+
+    def get(self, key: int) -> int:
+        if key not in self.mapping:
+            return -1
+        node = self.mapping[key]
+        self.moveToMostRecent(node)
+        return node.val
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.mapping:
+            node = self.mapping[key]
+            self.moveToMostRecent(node)
+            node.val = value
+        else:
+            if self.occupied >= self.capacity:
+                del self.mapping[self.LRUListHead.next.key]
+                self.LRUListHead.next = self.LRUListHead.next.next
+                if self.LRUListHead.next:
+                    self.LRUListHead.next.prev = self.LRUListHead
+                else:
+                    self.LRUListTail = self.LRUListHead
+            else:
+                self.occupied += 1
+            node = DoublyLinkedNode(key, value)
+            self.mapping[key] = node
+            self.LRUListTail.next = node
+            node.prev = self.LRUListTail
+            self.LRUListTail = node

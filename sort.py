@@ -1,6 +1,5 @@
 from functools import reduce
 import heapq
-import math
 import random
 from typing import List, Optional
 
@@ -27,6 +26,31 @@ class Solution:
 
         l, h = 0, len(nums)
         return partition(nums, l, h)
+
+    # 973
+    def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
+        def quickSelect(low, high):
+            if low == high:
+                return
+            pivot = random.randint(low, high)
+            innerLow, innerHigh = low, high
+            countLessThan = low
+            while innerLow < innerHigh:
+                if points[innerLow] < pivot:
+                    countLessThan += 1
+                    innerLow += 1
+                else:
+                    points[innerHigh], points[innerLow] = points[innerLow], points[innerHigh]
+                    high -= 1
+            if countLessThan > k:
+                quickSelect(innerLow, high)
+            elif countLessThan < k:
+                quickSelect(low, innerLow)
+            else:
+                return
+
+        quickSelect(0, len(points) - 1)
+        return points[:k]
 
     # 462
     def minMoves2(self, nums: List[int]) -> int:

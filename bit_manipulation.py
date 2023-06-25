@@ -91,3 +91,23 @@ class Solution:
                 if wordsInBit[i] & wordsInBit[j] == 0:
                     ans = max(ans, len(words[i]) * len(words[j]))
         return ans
+
+    # 289
+    def gameOfLife(self, board: List[List[int]]) -> None:
+        neighbors = [[-1, 0], [1, 0], [0, -1], [0, 1], [1, 1], [-1, -1], [-1, 1], [1, -1]]
+        m, n = len(board), len(board[0])
+        for i in range(m):
+            for j in range(n):
+                board[i][j] <<= 1
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                neighborCount = 0
+                for neighbor in neighbors:
+                    nextx, nexty = neighbor[0] + i, neighbor[1] + j
+                    if nextx >= 0 and nextx < m and nexty >= 0 and nexty < n:
+                        neighborCount += board[nextx][nexty] >> 1
+                if neighborCount == 3 or board[i][j] >> 1 == 1 and neighborCount == 2:
+                    board[i][j] |= 1
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                board[i][j] &= 1

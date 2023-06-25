@@ -187,6 +187,31 @@ class Solution:
             return left
         return root
 
+    # 105*
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:
+        if len(preorder) == 0:
+            return None
+        root = TreeNode(val=preorder[0])
+        divider = inorder.index(preorder[0])
+        root.left = self.buildTree(preorder[1 : divider + 1], inorder[:divider])
+        root.right = self.buildTree(preorder[divider + 1 :], inorder[divider + 1 :])
+        return root
+
+    # 124*
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        self.ans = float("-inf")
+
+        def DFS(node: Optional[TreeNode]):
+            if node is None:
+                return 0
+            leftSum = DFS(node.left)
+            rightSum = DFS(node.right)
+            self.ans = max(self.ans, node.val + max(leftSum, 0) + max(rightSum, 0))
+            return node.val + max(leftSum, rightSum, 0)
+
+        DFS(root)
+        return self.ans
+
     # B. BST
     # 230
     def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:

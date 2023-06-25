@@ -69,7 +69,7 @@ class Solution:
 
         low, high = 0, len(nums) - 1
         while low < high:
-            mid = (high + low) // 2 + 1
+            mid = (high + low + 1) // 2
             if nums[mid] <= target:
                 low = mid
             else:
@@ -128,3 +128,30 @@ class Solution:
             else:
                 high = mid - 1
         return -1
+
+    # 981
+    class TimeMap:
+        def __init__(self):
+            self.keyMap = {}
+            # key: [[timestamps], [values]]
+
+        def set(self, key: str, value: str, timestamp: int) -> None:
+            if key in self.keyMap:
+                self.keyMap[key][0].append(timestamp)
+                self.keyMap[key][1].append(value)
+            else:
+                self.keyMap[key] = [[timestamp], [value]]
+
+        def get(self, key: str, timestamp: int) -> str:
+            if key in self.keyMap:
+                timestamps, values = self.keyMap[key]
+                low, high = 0, len(timestamps) - 1
+                while low < high:
+                    mid = (low + high + 1) // 2
+                    if timestamps[mid] <= timestamp:
+                        low = mid
+                    else:
+                        high = mid - 1
+                return values[low] if timestamps[low] <= timestamp else ""
+            else:
+                return ""

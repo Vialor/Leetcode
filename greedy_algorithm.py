@@ -1,3 +1,4 @@
+import collections
 import math
 from typing import List, Optional
 
@@ -142,3 +143,19 @@ class Solution:
                 balance = 0
                 startIndex = i + 1
         return startIndex
+
+    # 621
+    # the greedy way, hard to think of, using queue is better
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        taskCounter = collections.Counter(tasks)
+        maxFreq, maxCount = 0, 0
+        for frequency in taskCounter.values():
+            if frequency > maxFreq:
+                maxFreq = frequency
+                maxCount = 1
+            elif frequency == maxFreq:
+                maxCount += 1
+        emptySlots = (maxFreq - 1) * (n - maxCount + 1)
+        restTasks = len(tasks) - maxFreq * maxCount
+        idles = max(0, emptySlots - restTasks)
+        return idles + len(tasks)

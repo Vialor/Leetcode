@@ -1,5 +1,12 @@
 import collections
+from heapq import *
 from typing import List, Optional
+
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
 
 
 class Solution:
@@ -227,7 +234,47 @@ class Solution:
         for i in range(len(height)):
             stack.append(height[i])
 
+    # https://leetcode.com/problems/subarrays-with-k-different-integers/
+    # https://leetcode.com/problems/online-stock-span/
+    # https://leetcode.com/problems/sum-of-subarray-minimums/
 
-# https://leetcode.com/problems/subarrays-with-k-different-integers/
-# https://leetcode.com/problems/online-stock-span/
-# https://leetcode.com/problems/sum-of-subarray-minimums/
+    # heap
+    # 1046*
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        stones = [-stone for stone in stones]
+        heapify(stones)
+        while len(stones) > 1:
+            heappush(stones, -abs(heappop(stones) - heappop(stones)))
+        return -stones[0]
+
+    # 23*
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        pq = [(lists[i].val, i, lists[i]) for i in range(len(lists)) if lists[i]]
+        heapify(pq)
+        ansHead = ListNode()
+        ansCurNode = ansHead
+        while pq:
+            popItem = heappop(pq)
+            curNode = popItem[2]
+            ansCurNode.next = curNode
+            ansCurNode = curNode
+            if curNode.next:
+                heappush(pq, (curNode.next.val, popItem[1], curNode.next))
+        return ansHead.next
+
+    # 621*
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        taskCounter = collections.Counter(tasks).values()
+        taskCounter = [-frequency for frequency in taskCounter]
+        heapify(taskCounter)
+        timeQueue = collections.deque()
+        time = 0
+        while taskCounter or timeQueue:
+            time += 1
+            if taskCounter:
+                freq = heappop(taskCounter) + 1
+                if freq < 0:
+                    timeQueue.append((freq, time + n))
+            if timeQueue and time == timeQueue[0][1]:
+                heappush(taskCounter, timeQueue.popleft()[0])
+        return time

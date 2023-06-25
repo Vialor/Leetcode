@@ -78,7 +78,7 @@ class Solution:
                 high = mid
         return low
 
-    # 287
+    # 287 nums is modified
     def findDuplicate(self, nums: List[int]) -> int:
         for i in range(len(nums)):
             while nums[i] != i + 1 and nums[i] != nums[nums[i] - 1]:

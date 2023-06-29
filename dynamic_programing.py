@@ -179,6 +179,24 @@ class Solution:
                 maxLen = max(maxLen, dp[i + 1][j + 1])
         return maxLen
 
+    # 1340 O(nd)
+    # There is a monotonic stack solution which is better, but much more difficult
+    def maxJumps(self, arr: List[int], d: int) -> int:
+        @functools.cache
+        def maxJumpsWithStartIndex(startIndex: int) -> int:
+            maxSubJump = 0
+            for i in range(1, d + 1):
+                if startIndex + i >= len(arr) or arr[startIndex + i] >= arr[startIndex]:
+                    break
+                maxSubJump = max(maxSubJump, maxJumpsWithStartIndex(startIndex + i))
+            for i in range(1, d + 1):
+                if startIndex - i < 0 or arr[startIndex - i] >= arr[startIndex]:
+                    break
+                maxSubJump = max(maxSubJump, maxJumpsWithStartIndex(startIndex - i))
+            return maxSubJump + 1
+
+        return max(maxJumpsWithStartIndex(i) for i in range(len(arr)))
+
     # B. 0-1 KNAPSACK
     # 416* 2D
     # def canPartition(self, nums: List[int]) -> bool:

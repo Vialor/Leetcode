@@ -1,4 +1,5 @@
 import collections
+from functools import lru_cache
 from heapq import *
 from typing import List, Optional
 
@@ -180,6 +181,49 @@ class Solution:
                 result[i] = stack[-1]
             stack.append(nums[i])
         return result
+
+    # 1340* O(n)
+    # Just dp and recurssion is easier but slower. This solution gets rid of the complexity of d.
+    def maxJumps(self, arr: List[int], d: int) -> int:
+        arr.append(float("inf"))
+        arrL = len(arr)
+        stack = []
+        dp = [1 for _ in range(arrL)]
+        for index, arr_i in enumerate(arr):
+            while stack and arr[stack[-1]] < arr_i:
+                current = [stack.pop()]
+                while stack and arr[stack[-1]] == arr[current[0]]:
+                    current.append(stack.pop())
+                for sub_index in current:
+                    if index - sub_index <= d:
+                        dp[index] = max(dp[index], dp[sub_index] + 1)
+                    if stack and sub_index - stack[-1] <= d:
+                        dp[stack[-1]] = max(dp[stack[-1]], dp[sub_index] + 1)
+            stack.append(index)
+        return max(dp[: arrL - 1])
+
+    # 1340 second solution
+    def maxJumps(self, A, d):
+        N = len(A)
+        graph = collections.defaultdict(list)
+
+        def jump(iterator):
+            stack = []
+            for i in iterator:
+                while stack and A[stack[-1]] < A[i]:
+                    j = stack.pop()
+                    if abs(i - j) <= d:
+                        graph[j].append(i)
+                stack.append(i)
+
+        jump(range(N))
+        jump(reversed(range(N)))
+
+        @lru_cache(maxsize=None)
+        def height(i):
+            return 1 + max(map(height, graph[i]), default=0)
+
+        return max(map(height, range(N)))
 
     # monotonic deque
     # 239*

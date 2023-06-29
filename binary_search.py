@@ -77,7 +77,7 @@ class Solution:
         end = low
         return [start, end]
 
-    # 875
+    # 875*
     def minEatingSpeed(self, piles: List[int], h: int) -> int:
         low, high = 1, max(piles)
         minSpead = high
@@ -94,6 +94,55 @@ class Solution:
             else:
                 low = mid + 1
         return minSpead
+
+    # 1011
+    def shipWithinDays(self, weights: List[int], days: int) -> int:
+        def canShip(capacity: int) -> bool:
+            dayCount = 1
+            carry = 0
+            for weight in weights:
+                if weight > capacity:
+                    return False
+                if carry + weight > capacity:
+                    dayCount += 1
+                    carry = 0
+                carry += weight
+                if dayCount > days:
+                    return False
+            return True
+
+        low, high = 0, sum(weights)
+        while low < high:
+            mid = (low + high) // 2
+            if canShip(mid):
+                high = mid
+            else:
+                low = mid + 1
+        return low
+
+    # 410
+    def splitArray(self, nums: List[int], k: int) -> int:
+        preSums = [0]
+        for num in nums:
+            preSums.append(preSums[-1] + num)
+
+        low, high = 0, preSums[-1]
+        while low < high:
+            mid = (low + high) // 2
+
+            arrayCount = 0
+            start, end = 0, 1
+            while end < len(preSums) and arrayCount < k:
+                while end < len(preSums) and preSums[end] - preSums[start] <= mid:
+                    end += 1
+                start = end - 1
+                arrayCount += 1
+
+            if end < len(preSums):
+                low = mid + 1
+            else:
+                high = mid
+        return low
 
     # 74*
     def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:

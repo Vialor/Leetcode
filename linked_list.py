@@ -263,3 +263,17 @@ class LRUCache:
             self.LRUListTail.next = node
             node.prev = self.LRUListTail
             self.LRUListTail = node
+
+    # 141*
+    class ListNode:
+        def __init__(self):
+            self.next = None
+
+    def hasCycle(self, head: Optional[ListNode]) -> bool:
+        fast, slow = head.next, head
+        while slow != None and fast != None and fast.next != None:
+            if fast == slow:
+                return True
+            fast = fast.next.next
+            slow = slow.next
+        return False

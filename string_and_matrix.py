@@ -1,3 +1,4 @@
+from functools import cache
 import math
 from typing import List, Optional
 
@@ -137,3 +138,77 @@ class Solution:
                 candidate = num
             vote = vote + 1 if candidate == num else vote - 1
         return candidate
+
+    # 59
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        matrix = [[0] * n for i in range(n)]
+        directions, turn = ["right", "down", "left", "up"], 0
+        i, j = 0, 0
+        for num in range(1, n**2 + 1):
+            matrix[i][j] = num
+            match directions[turn % 4]:
+                case "right":
+                    j += 1
+                    if j == n - turn // 4 - 1:
+                        turn += 1
+                case "down":
+                    i += 1
+                    if i == n - turn // 4 - 1:
+                        turn += 1
+                case "left":
+                    j -= 1
+                    if j == turn // 4:
+                        turn += 1
+                case "up":
+                    i -= 1
+                    if i == turn // 4 + 1:
+                        turn += 1
+        return matrix
+
+    # 73
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        m, n = len(matrix), len(matrix[0])
+        firstCol, firstRow = False, False
+        for i in range(m):
+            for j in range(n):
+                if matrix[i][j] == 0:
+                    if i == 0:
+                        firstRow = True
+                    if j == 0:
+                        firstCol = True
+                    if i > 0 and j > 0:
+                        matrix[i][0] = matrix[0][j] = 0
+
+        for i in range(1, m):
+            if matrix[i][0] == 0:
+                for j in range(1, n):
+                    matrix[i][j] = 0
+        for j in range(1, n):
+            if matrix[0][j] == 0:
+                for i in range(1, m):
+                    matrix[i][j] = 0
+
+        if firstCol:
+            for i in range(m):
+                matrix[i][0] = 0
+        if firstRow:
+            for j in range(n):
+                matrix[0][j] = 0
+
+    # 10*
+    @cache
+    def isMatch(self, s: str, p: str) -> bool:
+        if s == "" and p == "":
+            return True
+        followedByStar = len(p) > 1 and p[1] == "*"
+        firstMatch = len(s) > 0 and len(p) > 0 and (p[0] == s[0] or p[0] == ".")
+        if firstMatch and followedByStar:
+            return self.isMatch(s[1:], p) or self.isMatch(s, p[2:])
+        elif firstMatch and not followedByStar:
+            return self.isMatch(s[1:], p[1:])
+        elif not firstMatch and followedByStar:
+            return self.isMatch(s, p[2:])
+        return False

@@ -159,3 +159,21 @@ class Solution:
         restTasks = len(tasks) - maxFreq * maxCount
         idles = max(0, emptySlots - restTasks)
         return idles + len(tasks)
+
+    # 678
+    def checkValidString(self, s: str) -> bool:
+        leftCountMin, leftCountMax = 0, 0
+        for c in s:
+            if c == "(":
+                leftCountMin += 1
+                leftCountMax += 1
+            elif c == ")":
+                leftCountMin -= 1
+                leftCountMax -= 1
+            else:
+                leftCountMin -= 1
+                leftCountMax += 1
+            if leftCountMax < 0:
+                return False
+            leftCountMin = max(0, leftCountMin)
+        return leftCountMin == 0

@@ -188,3 +188,19 @@ class Solution:
         newNode.next = self.copyRandomList(head.next)
         newNode.random = self.copyRandomList(head.random)
         return self.nodeMap[head]
+
+    # 133
+    def cloneGraph(self, node: "Node") -> "Node":
+        if node is None:
+            return None
+        valToNode = {}
+
+        def DFS(curNode: "Node"):
+            valToNode[curNode.val] = Node(val=curNode.val, neighbors=[])
+            for neighbor in curNode.neighbors:
+                if neighbor.val not in valToNode:
+                    DFS(neighbor)
+                valToNode[curNode.val].neighbors.append(valToNode[neighbor.val])
+
+        DFS(node)
+        return valToNode[node.val]

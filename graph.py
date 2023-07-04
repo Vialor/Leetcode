@@ -1,4 +1,5 @@
 import collections
+import heapq
 from typing import List, Optional
 
 
@@ -98,3 +99,39 @@ class Solution:
             else:
                 return edge
         return [-1, -1]
+
+    # 322
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        graph = collections.defaultdict(list)
+        for start, dest in tickets:
+            heapq.heappush(graph[start], dest)
+
+        path = []
+
+        def DFS(start):
+            destList = graph[start]
+            while len(destList) > 0:
+                DFS(heapq.heappop(destList))
+            path.append(start)
+
+        DFS("JFK")
+        return path[::-1]
+
+    def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start: int, end: int) -> float:
+        graph = [[] for _ in range(n)]  # from: (to, possibility from from to to)
+        for i in range(len(edges)):
+            a, b = edges[i]
+            graph[a].append((b, succProb[i]))
+            graph[b].append((a, succProb[i]))
+
+        dp = [0] * n
+        dp[start] = 1
+        maxHeap = [(-1, start)]  # (best possibility from start to the node, node)
+        while maxHeap:
+            prevProb, node = heapq.heappop(maxHeap)
+            for toNode, nextProb in graph[node]:
+                newProb = -prevProb * nextProb
+                if newProb > dp[toNode]:
+                    heapq.heappush(maxHeap, (-newProb, toNode))
+                    dp[toNode] = newProb
+        return dp[end]

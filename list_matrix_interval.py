@@ -4,6 +4,76 @@ from typing import List, Optional
 
 
 class Solution:
+    # A. list/String
+    # 1351
+    def countNegatives(self, grid: List[List[int]]) -> int:
+        ans = 0
+        m, n = len(grid), len(grid[0])
+        i, j = 0, n - 1
+        negToRight = 0
+        for i in range(m):
+            while j >= 0 and grid[i][j] < 0:
+                negToRight += 1
+                j -= 1
+            ans += negToRight
+        return ans
+
+    # 57
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        ans = []
+        n = len(intervals)
+        i = 0
+        while i < n and intervals[i][1] < newInterval[0]:
+            ans.append(intervals[i])
+            i += 1
+        if i < n:
+            newInterval[0] = min(intervals[i][0], newInterval[0])
+        while i < n and intervals[i][0] <= newInterval[1]:
+            newInterval[1] = max(intervals[i][1], newInterval[1])
+            i += 1
+        ans.append(newInterval)
+        while i < n:
+            ans.append(intervals[i])
+            i += 1
+        return ans
+
+    # 189*
+    def rotate(self, nums: List[int], k: int) -> None:
+        def reverse(start, end):
+            while start < end:
+                nums[start], nums[end] = nums[end], nums[start]
+                start += 1
+                end -= 1
+
+        N = len(nums)
+        k %= N
+        reverse(0, N - 1)
+        reverse(0, k - 1)
+        reverse(k, N - 1)
+
+    # 1823*
+    def findTheWinner(self, n: int, k: int) -> int:
+        survivor = 0
+        for l in range(1, n + 1):
+            survivor = (survivor + k) % l
+        return survivor + 1
+
+    # 390
+    def lastRemaining(self, n: int) -> int:
+        turns = 0
+        step = 1
+        ans = 1
+        while n > 1:
+            if turns % 2 == 0 or n % 2 == 1:
+                ans += step
+            if n % 2 == 1:
+                n = n - n // 2 - 1
+            else:
+                n = n - n // 2
+            turns += 1
+            step *= 2
+        return ans
+
     # 696*
     def countBinarySubstrings(self, s: str) -> int:
         preLen, curLen = 0, 0
@@ -139,6 +209,23 @@ class Solution:
             vote = vote + 1 if candidate == num else vote - 1
         return candidate
 
+    # 10*
+
+    @cache
+    def isMatch(self, s: str, p: str) -> bool:
+        if s == "" and p == "":
+            return True
+        followedByStar = len(p) > 1 and p[1] == "*"
+        firstMatch = len(s) > 0 and len(p) > 0 and (p[0] == s[0] or p[0] == ".")
+        if firstMatch and followedByStar:
+            return self.isMatch(s[1:], p) or self.isMatch(s, p[2:])
+        elif firstMatch and not followedByStar:
+            return self.isMatch(s[1:], p[1:])
+        elif not firstMatch and followedByStar:
+            return self.isMatch(s, p[2:])
+        return False
+
+    # B. Matrix
     # 59
     def generateMatrix(self, n: int) -> List[List[int]]:
         matrix = [[0] * n for i in range(n)]
@@ -198,17 +285,4 @@ class Solution:
             for j in range(n):
                 matrix[0][j] = 0
 
-    # 10*
-    @cache
-    def isMatch(self, s: str, p: str) -> bool:
-        if s == "" and p == "":
-            return True
-        followedByStar = len(p) > 1 and p[1] == "*"
-        firstMatch = len(s) > 0 and len(p) > 0 and (p[0] == s[0] or p[0] == ".")
-        if firstMatch and followedByStar:
-            return self.isMatch(s[1:], p) or self.isMatch(s, p[2:])
-        elif firstMatch and not followedByStar:
-            return self.isMatch(s[1:], p[1:])
-        elif not firstMatch and followedByStar:
-            return self.isMatch(s, p[2:])
-        return False
+    # C. Interval

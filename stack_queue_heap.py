@@ -1,6 +1,7 @@
 import collections
 from functools import lru_cache
 from heapq import *
+import heapq
 from typing import List, Optional
 
 
@@ -322,3 +323,42 @@ class Solution:
             if timeQueue and time == timeQueue[0][1]:
                 heappush(taskCounter, timeQueue.popleft()[0])
         return time
+
+    # 1851
+    def minInterval(self, intervals: List[List[int]], queries: List[int]) -> List[int]:
+        intervals.sort(reverse=True)
+        minHeap = []
+        ans = {}
+        for q in sorted(queries):
+            while len(intervals) > 0 and intervals[-1][0] <= q:
+                start, end = intervals.pop()
+                heapq.heappush(minHeap, (end - start + 1, end))
+            while len(minHeap) > 0 and minHeap[0][1] < q:
+                heapq.heappop(minHeap)
+            ans[q] = minHeap[0][0] if len(minHeap) > 0 else -1
+        return [ans[q] for q in queries]
+
+    # 295*
+
+
+class MedianFinder:
+    def __init__(self):
+        self.lowerMaxHeap = [float("inf")]
+        self.upperMinHeap = [float("inf")]
+
+    def addNum(self, num: int) -> None:
+        if self.upperMinHeap[0] < num:
+            heappush(self.upperMinHeap, num)
+        else:
+            heappush(self.lowerMaxHeap, -num)
+
+        diff = len(self.lowerMaxHeap) - len(self.upperMinHeap)
+        if diff > 1:
+            heappush(self.upperMinHeap, -heappop(self.lowerMaxHeap))
+        elif diff < 0:
+            heappush(self.lowerMaxHeap, -heappop(self.upperMinHeap))
+
+    def findMedian(self) -> float:
+        if len(self.lowerMaxHeap) == len(self.upperMinHeap):
+            return (self.upperMinHeap[0] - self.lowerMaxHeap[0]) / 2
+        return -self.lowerMaxHeap[0]

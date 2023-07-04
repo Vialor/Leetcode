@@ -204,3 +204,29 @@ class Solution:
                 return values[low] if timestamps[low] <= timestamp else ""
             else:
                 return ""
+
+    # 4
+    def findMedianSortedArrays(self, A: List[int], B: List[int]) -> float:
+        if len(A) > len(B):
+            A, B = B, A
+        AL, BL = len(A), len(B)
+        ijSum = (AL + BL + 1) // 2
+        low, high = 0, len(A)
+        while True:
+            i = (low + high) // 2
+            j = ijSum - i
+            if i > 0 and j < BL and A[i - 1] > B[j]:
+                high = i - 1
+            elif j > 0 and i < AL and B[j - 1] > A[i]:
+                low = i + 1
+            else:
+                leftMost = A[i - 1] if i > 0 else float("-inf")
+                if j > 0:
+                    leftMost = max(leftMost, B[j - 1])
+                rightMin = A[i] if i < AL else float("inf")
+                if j < BL:
+                    rightMin = min(rightMin, B[j])
+                if (AL + BL) % 2 == 1:
+                    return leftMost
+                else:
+                    return (leftMost + rightMin) / 2

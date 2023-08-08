@@ -62,3 +62,18 @@ class Solution:
                 if curRoofs[-1] < height:
                     skylines.append((x, curRoofs[-1]))
         return skylines
+
+    # 1584
+    def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        remains = {(x, y): 0 if i == 0 else float("inf") for i, (x, y) in enumerate(points)}
+        ans = 0
+        while remains:
+            curx, cury, mincost = None, None, float("inf")
+            for x, y in remains:
+                if remains[(x, y)] < mincost:
+                    curx, cury, mincost = x, y, remains[(x, y)]
+            ans += mincost
+            remains.pop((curx, cury))
+            for x, y in remains:
+                remains[(x, y)] = min(remains[(x, y)], abs(curx - x) + abs(cury - y))
+        return ans

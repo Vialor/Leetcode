@@ -212,6 +212,40 @@ class Solution:
         DFS(root)
         return self.ans
 
+    # 99* Morris
+    def recoverTree(self, root: Optional[TreeNode]) -> None:
+        prev = None
+        first, second = None, None  # the nodes to swap
+
+        def visit(node: TreeNode):
+            nonlocal prev, first, second
+            if prev and prev.val > node.val:
+                if first is None:
+                    first = prev
+                second = node
+            prev = node
+
+        cur = root
+        while cur:
+            if cur.left is None:
+                visit(cur)
+                cur = cur.right
+            else:
+                # find predecessor
+                pred = cur.left
+                while pred.right and pred.right != cur:
+                    pred = pred.right
+
+                if pred.right is None:  # first time
+                    pred.right = cur
+                    cur = cur.left
+                else:  # second time: left is done
+                    pred.right = None
+                    visit(cur)
+                    cur = cur.right
+
+        first.val, second.val = second.val, first.val
+
     # B. BST
     # 230
     def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
@@ -479,3 +513,65 @@ class MapSum:
                 return 0
             curTrieNode = curTrieNode.children[letter]
         return curTrieNode.val
+
+    # D. Segment Tree
+    # 307
+
+
+class SegmentTree:
+    def __init__(self, nums):
+        self._getLeft = lambda cur: cur * 2 + 1
+        self._getRight = lambda cur: cur * 2 + 2
+
+        self.nums = nums
+        self.tree = [-1] * 4 * len(nums)
+        self._buildTree(0, len(nums), 0)
+
+    def _buildTree(self, start, end, cur):
+        if end - start == 1:
+            self.tree[cur] = self.nums[start]
+        elif end > start:
+            mid = (start + end) // 2
+            self._buildTree(start, mid, self._getLeft(cur))
+            self._buildTree(mid, end, self._getRight(cur))
+            self.tree[cur] = self.tree[self._getLeft(cur)] + self.tree[self._getRight(cur)]
+
+    def query(self, start, end, cur, qstart, qend) -> int:
+        if qend <= qstart:
+            return 0
+        if start == qstart and end == qend:
+            return self.tree[cur]
+
+        mid = (start + end) // 2
+        if qend <= mid:
+            return self.query(start, mid, self._getLeft(cur), qstart, qend)
+        elif qstart >= mid:
+            return self.query(mid, end, self._getRight(cur), qstart, qend)
+        leftSum = self.query(start, mid, self._getLeft(cur), qstart, mid)
+        rightSum = self.query(mid, end, self._getRight(cur), mid, qend)
+        return leftSum + rightSum
+
+    def update(self, start, end, cur, qindex, val):
+        if end - start == 1:
+            self.tree[cur] = val
+            self.nums[qindex] = val
+            return
+
+        mid = (start + end) // 2
+        if qindex < mid:
+            self.update(start, mid, self._getLeft(cur), qindex, val)
+        else:
+            self.update(mid, end, self._getRight(cur), qindex, val)
+        self.tree[cur] = self.tree[self._getLeft(cur)] + self.tree[self._getRight(cur)]
+
+
+class NumArray:
+    def __init__(self, nums: List[int]):
+        self.numsLen = len(nums)
+        self.segTree = SegmentTree(nums)
+
+    def update(self, index: int, val: int) -> None:
+        return self.segTree.update(0, self.numsLen, 0, index, val)
+
+    def sumRange(self, left: int, right: int) -> int:
+        return self.segTree.query(0, self.numsLen, 0, left, right + 1)

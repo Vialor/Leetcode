@@ -5,6 +5,18 @@ from typing import List, Optional
 
 class Solution:
     # A. list/String
+    # 334*
+    def increasingTriplet(self, nums: List[int]) -> bool:
+        smallestNum, nextSmallestNum = float("inf"), float("inf")
+        for num in nums:
+            if num <= smallestNum:
+                smallestNum = num
+            elif num <= nextSmallestNum:
+                nextSmallestNum = num
+            else:
+                return True
+        return False
+
     # 1351
     def countNegatives(self, grid: List[List[int]]) -> int:
         ans = 0
@@ -36,6 +48,16 @@ class Solution:
             ans.append(intervals[i])
             i += 1
         return ans
+
+    # 41
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        for i in range(len(nums)):
+            while 1 <= nums[i] <= len(nums) and nums[i] != i + 1 and nums[i] != nums[nums[i] - 1]:
+                nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+        for i in range(len(nums)):
+            if i + 1 != nums[i]:
+                return i + 1
+        return len(nums) + 1
 
     # 189*
     def rotate(self, nums: List[int], k: int) -> None:
@@ -210,7 +232,6 @@ class Solution:
         return candidate
 
     # 10*
-
     @cache
     def isMatch(self, s: str, p: str) -> bool:
         if s == "" and p == "":
@@ -224,6 +245,28 @@ class Solution:
         elif not firstMatch and followedByStar:
             return self.isMatch(s, p[2:])
         return False
+
+    # 2381*
+    def shiftingLetters(self, s: str, shifts: List[List[int]]) -> str:
+        def shiftChar(c: str, move: int) -> str:
+            return chr(97 + (ord(s[i]) - 97 + move) % 26)
+
+        movesCombine = [0] * (len(s) + 1)
+        for start, end, direction in shifts:
+            move = 1 if direction == 1 else -1
+            movesCombine[start] += move
+            movesCombine[end + 1] -= move
+
+        shiftMoves = []
+        curMove = 0
+        for i in range(len(s)):
+            curMove += movesCombine[i]
+            shiftMoves.append(curMove)
+
+        ans = []
+        for i in range(len(s)):
+            ans.append(shiftChar(s[i], shiftMoves[i]))
+        return "".join(ans)
 
     # B. Matrix
     # 59

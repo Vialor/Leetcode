@@ -117,6 +117,7 @@ class Solution:
         DFS("JFK")
         return path[::-1]
 
+    # 1514
     def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start: int, end: int) -> float:
         graph = [[] for _ in range(n)]  # from: (to, possibility from from to to)
         for i in range(len(edges)):
@@ -135,3 +136,103 @@ class Solution:
                     heapq.heappush(maxHeap, (-newProb, toNode))
                     dp[toNode] = newProb
         return dp[end]
+
+    # 743* Dijkstra
+    def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
+        # graph represented by adj list - {fromNode: [(cost, toNode)]}
+        graph = [[] if i > 0 else None for i in range(n + 1)]
+        for u, v, w in times:
+            graph[u].append((w, v))
+
+        minHeap = [(0, k)]
+        processed = set()
+        while minHeap:
+            curCost, curNode = heapq.heappop(minHeap)
+            processed.add(curNode)
+            if len(processed) == n:
+                return curCost
+            for neighborCost, neighbor in graph[curNode]:
+                newCost = curCost + neighborCost
+                if neighbor not in processed:
+                    heapq.heappush(minHeap, (newCost, neighbor))
+        return -1
+
+    # 1631*
+    def minimumEffortPath(self, heights: List[List[int]]) -> int:
+        m, n = len(heights), len(heights[0])
+        neighbors = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+        availablePaths = [(0, (0, 0))]  # (cost, dest)
+        dp = [[float("inf")] * n for _ in range(m)]
+        dp[0][0] = 0
+        while True:
+            cost, (i, j) = heapq.heappop(availablePaths)
+            if i == m - 1 and j == n - 1:
+                return dp[-1][-1]
+            for a, b in neighbors:
+                ci, cj = a + i, b + j
+                if 0 <= ci < m and 0 <= cj < n:
+                    newCost = max(cost, abs(heights[i][j] - heights[ci][cj]))
+                    if newCost < dp[ci][cj]:
+                        dp[ci][cj] = newCost
+                        heapq.heappush(availablePaths, (newCost, (ci, cj)))
+
+    # 787
+    def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
+        graph = [[] for _ in range(n)]
+
+        for fromNode, toNode, cost in flights:
+            graph[fromNode].append((cost, toNode))
+
+        dp = [float("inf") if i != src else 0 for i in range(n)]
+        currentLevel = [src]
+        while currentLevel and k >= 0:
+            nextLevel = []
+            nextdp = dp[:]
+            for node in currentLevel:
+                for newCost, newNode in graph[node]:
+                    if dp[node] + newCost < nextdp[newNode]:
+                        nextdp[newNode] = dp[node] + newCost
+                        nextLevel.append(newNode)
+            currentLevel = nextLevel
+            dp = nextdp
+            k -= 1
+        return dp[dst] if dp[dst] != float("inf") else -1
+
+    # 778
+    def swimInWater(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        dp = [[float("inf")] * n for _ in range(m)]
+        solved = set()
+        availablePaths = [(grid[0][0], 0, 0)]  # cost, i, j
+        while availablePaths:
+            cost, i, j = heapq.heappop(availablePaths)
+            if (i, j) in solved:
+                continue
+            if i == m - 1 and j == n - 1:
+                return cost
+            solved.add((i, j))
+            dp[i][j] = cost
+            for ni, nj in [(i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)]:
+                if 0 <= ni < m and 0 <= nj < n and (ni, nj) not in solved:
+                    heapq.heappush(availablePaths, (max(cost, grid[ni][nj]), ni, nj))
+
+    # 329*
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+        m, n = len(matrix), len(matrix[0])
+        dp = [[-1] * n for _ in range(m)]
+
+        def increasingPathSearch(i, j):
+            if dp[i][j] != -1:
+                return
+            neighborLengths = [0]
+            for ni, nj in [(i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)]:
+                if 0 <= ni < m and 0 <= nj < n and matrix[ni][nj] > matrix[i][j]:
+                    increasingPathSearch(ni, nj)
+                    neighborLengths.append(dp[ni][nj])
+            dp[i][j] = 1 + max(neighborLengths)
+
+        for i in range(m):
+            for j in range(n):
+                increasingPathSearch(i, j)
+        return max(sum(dp, []))

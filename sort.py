@@ -142,3 +142,34 @@ class Solution:
             else:
                 nums[indexMapping(mid)], nums[indexMapping(high)] = nums[indexMapping(high)], nums[indexMapping(mid)]
                 high -= 1
+
+    # 315*
+    def countSmaller(self, nums: List[int]) -> List[int]:
+        ans = [0] * len(nums)
+        sortedIndices = list(range(len(nums)))
+
+        def conquer(start, end):
+            if end - start <= 1:
+                return
+
+            middle = (start + end) // 2
+            conquer(start, middle)
+            conquer(middle, end)
+
+            nonlocal sortedIndices
+            localSortedIndices = []
+            rightSmallCount = 0
+            i, j = start, middle
+            while i < middle or j < end:
+                if j < end and (i >= middle or i < middle and nums[sortedIndices[i]] > nums[sortedIndices[j]]):
+                    localSortedIndices.append(sortedIndices[j])
+                    rightSmallCount += 1
+                    j += 1
+                else:
+                    localSortedIndices.append(sortedIndices[i])
+                    ans[sortedIndices[i]] += rightSmallCount
+                    i += 1
+            sortedIndices[start:end] = localSortedIndices
+
+        conquer(0, len(nums))
+        return ans

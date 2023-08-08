@@ -97,6 +97,68 @@ class Solution:
         def getMin(self) -> int:
             return self.minStack[-1]
 
+    # 224*
+    def calculate(self, s: str) -> int:
+        curStr = ""
+        slist = []
+        for i in range(len(s)):
+            if s[i] == " ":
+                continue
+            curStr += s[i]
+            if i + 1 >= len(s) or not s[i].isdigit() or not s[i + 1].isdigit():
+                slist.append(curStr)
+                curStr = ""
+
+        bracketIndexMapping = {}
+        bracketStack = []
+        for i, c in enumerate(slist):
+            if c == "(":
+                bracketStack.append(i)
+            elif c == ")":
+                bracketIndexMapping[i] = bracketStack.pop()
+
+        def calculateHelper(start, end) -> int:
+            if end - start <= 0:
+                return 0
+            elif end - start <= 2:
+                return int("".join(slist[start:end]))
+            match slist[end - 1]:
+                case ")":
+                    opInd = bracketIndexMapping[end - 1] - 1
+                    num1 = calculateHelper(start, opInd)
+                    num2 = calculateHelper(opInd + 2, end - 1)
+                    return num1 - num2 if slist[opInd] == "-" else num1 + num2
+                case _:  # ints
+                    opInd = end - 2
+                    num1 = calculateHelper(start, opInd)
+                    num2 = calculateHelper(opInd + 1, end)
+                    return num1 - num2 if slist[opInd] == "-" else num1 + num2
+
+        return calculateHelper(0, len(slist))
+
+    # method 2 from other devlopers, better than mine
+    # def calculate(self, s):
+    #     def evaluate(i):
+    #         res, digit, sign = 0, 0, 1
+    #         while i < len(s):
+    #             if s[i].isdigit():
+    #                 digit = digit * 10 + int(s[i])
+    #             elif s[i] in '+-':
+    #                 res += digit * sign
+    #                 digit = 0
+    #                 sign = 1 if s[i] == '+' else -1
+    #             elif s[i] == '(':
+    #                 subres, i = evaluate(i+1)
+    #                 res += sign * subres
+    #             elif s[i] == ')':
+    #                 res += digit * sign
+    #                 return res, i
+    #             i += 1
+
+    #         return res + digit * sign
+
+    #     return evaluate(0)
+
     # monotonic stack
     # 84*
     def largestRectangleArea(self, heights: List[int]) -> int:
@@ -110,6 +172,18 @@ class Solution:
                 ans = max(ans, heights[popIndex] * (i - left - 1))
             minStack.append(i)
         return ans
+
+    # 456*
+    def find132pattern(self, nums: List[int]) -> bool:
+        popNum = float("-inf")
+        decreaseStack = []
+        for num in reversed(nums):
+            if num < popNum:
+                return True
+            while decreaseStack and decreaseStack[-1] < num:
+                popNum = decreaseStack.pop()
+            decreaseStack.append(num)
+        return False
 
     # 85*
     def maximalRectangle(self, matrix: List[List[str]]) -> int:

@@ -125,6 +125,19 @@ class Solution:
                     LIS[i] = max(LIS[i], LIS[j] + 1)
         return max(LIS)
 
+    # 32
+    def longestValidParentheses(self, s: str) -> int:
+        dp = [0] * (len(s) + 1)
+        for i in range(1, len(s)):
+            if s[i] == ")":
+                if s[i - 1] == "(":
+                    dp[i + 1] = dp[i - 1] + 2
+                else:
+                    prev = i - 1 - dp[i]
+                    if prev >= 0 and s[prev] == "(":
+                        dp[i + 1] = dp[prev] + dp[i] + 2
+        return max(dp)
+
     # 300* bisect method (this method is really sophisticated and also quicker O(nlog(n)))
     # def lengthOfLIS(self, nums: List[int]) -> int:
     #   LIS = []

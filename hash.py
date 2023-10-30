@@ -1,4 +1,5 @@
 from collections import Counter, defaultdict
+import random
 from typing import List, Optional
 
 
@@ -164,18 +165,45 @@ class Solution:
             ans += preSumsCount[curSum - k]
         return ans
 
-    # 846
-    def isNStraightHand(self, hand: List[int], groupSize: int) -> bool:
-        hand.sort()
-        handCounter = Counter(hand)
-        for card in hand:
-            if handCounter[card] == 0:
-                continue
-            for i in range(groupSize):
-                if handCounter[card + i] < 1:
-                    return False
-                handCounter[card + i] -= 1
-        return True
+    # 380*
+    class RandomizedSet:
+        def __init__(self):
+            self.numToInd = dict()
+            self.numList = []
+
+        def insert(self, val: int) -> bool:
+            if val in self.numToInd:
+                return False
+            self.numToInd[val] = len(self.numList)
+            self.numList.append(val)
+            return True
+
+        def remove(self, val: int) -> bool:
+            if val not in self.numToInd:
+                return False
+            lastNum = self.numList[-1]
+            valInd = self.numToInd[val]
+            self.numList[valInd] = lastNum
+            self.numToInd[lastNum] = valInd
+            self.numList.pop()
+            del self.numToInd[val]
+            return True
+
+        def getRandom(self) -> int:
+            return random.choice(self.numList)
+
+        # 846
+        def isNStraightHand(self, hand: List[int], groupSize: int) -> bool:
+            hand.sort()
+            handCounter = Counter(hand)
+            for card in hand:
+                if handCounter[card] == 0:
+                    continue
+                for i in range(groupSize):
+                    if handCounter[card + i] < 1:
+                        return False
+                    handCounter[card + i] -= 1
+            return True
 
     # 138
     nodeMap = {None: None}

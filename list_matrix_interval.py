@@ -220,6 +220,22 @@ class Solution:
                 count += 1
         return count
 
+    # 135
+    def candy(self, ratings: List[int]) -> int:
+        n = len(ratings)
+        left = [0] * n
+        right = [0] * n
+        for i in range(1, n):
+            if ratings[i] > ratings[i - 1]:
+                left[i] = left[i - 1] + 1
+        for i in range(n - 2, -1, -1):
+            if ratings[i] > ratings[i + 1]:
+                right[i] = right[i + 1] + 1
+        ans = 0
+        for i in range(n):
+            ans += max(left[i], right[i]) + 1
+        return ans
+
     # 169*
     # Boyer-Moore Majority Vote Algorithm
     def majorityElement(self, nums: List[int]) -> int:
@@ -267,6 +283,29 @@ class Solution:
         for i in range(len(s)):
             ans.append(shiftChar(s[i], shiftMoves[i]))
         return "".join(ans)
+
+    # 31
+    def nextPermutation(self, nums: List[int]) -> None:
+        def helper(ind: int):
+            # swap
+            swapInd = ind + 1
+            for i in range(ind + 2, len(nums)):
+                if nums[i] <= nums[ind]:
+                    break
+                if nums[swapInd] >= nums[i]:
+                    swapInd = i
+            nums[ind], nums[swapInd] = nums[swapInd], nums[ind]
+            # reverse
+            nums[ind + 1 :] = nums[:ind:-1]
+
+        last = nums[-1]
+        for i in reversed(range(len(nums) - 1)):
+            if nums[i] < last:
+                helper(i)
+                break
+            last = nums[i]
+        else:
+            nums.reverse()
 
     # B. Matrix
     # 59

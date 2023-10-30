@@ -212,6 +212,22 @@ class Solution:
         DFS(root)
         return self.ans
 
+    # 222*
+    def countNodes(self, root: Optional[TreeNode]) -> int:
+        def findHeight(node):
+            if node is None:
+                return 0
+            return findHeight(node.left) + 1
+
+        if root is None:
+            return 0
+        lheight = findHeight(root.left)
+        rheight = findHeight(root.right)
+        if lheight == rheight:
+            return 2**lheight + self.countNodes(root.right)
+        else:
+            return 2**rheight + self.countNodes(root.left)
+
     # 99* Morris
     def recoverTree(self, root: Optional[TreeNode]) -> None:
         prev = None

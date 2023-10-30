@@ -236,3 +236,41 @@ class Solution:
             for j in range(n):
                 increasingPathSearch(i, j)
         return max(sum(dp, []))
+
+    # 834
+    def sumOfDistancesInTree(self, n: int, edges: List[List[int]]) -> List[int]:
+        graph = [[] for _ in range(n)]
+        for a, b in edges:
+            graph[a].append(b)
+            graph[b].append(a)
+
+        ans = [0] * n
+        size = [1] * n
+
+        # calculate size and ans[0]
+        unvisited = set(range(n))
+
+        def DFS1(node) -> int:
+            unvisited.remove(node)
+            distanceSum = 0
+            for neighbor in graph[node]:
+                if neighbor in unvisited:
+                    neighborDistanceSum = DFS1(neighbor)
+                    distanceSum += neighborDistanceSum + size[neighbor]
+                    size[node] += size[neighbor]
+            return distanceSum
+
+        ans[0] = DFS1(0)
+
+        # calculate ans
+        unvisited = set(range(n))
+
+        def DFS2(node):
+            unvisited.remove(node)
+            for neighbor in graph[node]:
+                if neighbor in unvisited:
+                    ans[neighbor] = ans[node] + n - 2 * size[neighbor]
+                    DFS2(neighbor)
+
+        DFS2(0)
+        return ans

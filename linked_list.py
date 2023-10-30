@@ -1,5 +1,7 @@
 from typing import List, Optional
 
+from test_tools import TestTools
+
 
 class ListNode:
     def __init__(self, val=0, next=None):
@@ -8,6 +10,27 @@ class ListNode:
 
 
 class Solution:
+    # 206*
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        newHead = None
+        while head:
+            head.next, newHead, head = newHead, head, head.next
+        return newHead
+
+    # 92*
+    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+        dummy = ListNode(next=head)
+        pre = dummy
+        for _ in range(left - 1):
+            pre = pre.next
+        cur = pre.next
+        for _ in range(right - left):
+            temp = cur.next
+            cur.next = temp.next
+            temp.next = pre.next
+            pre.next = temp
+        return dummy.next
+
     # 19*
     def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
         pre = ListNode(next=head)
@@ -172,6 +195,28 @@ class Solution:
                 return fast
         return None
 
+    # 1721
+    def swapNodes(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        dummy = ListNode(next=head)
+        fast, slow = dummy, dummy
+        for _ in range(k - 1):
+            fast = fast.next
+        prea = fast
+        a = fast.next
+        fast = fast.next
+        while fast:
+            slow = slow.next
+            fast = fast.next
+        preb = slow
+        b = slow.next
+
+        tmp = b.next
+        prea.next = b
+        b.next = a.next
+        preb.next = a
+        a.next = tmp
+        return dummy.next
+
     # 143*
     def reorderList(self, head: Optional[ListNode]) -> None:
         if head is None:
@@ -277,3 +322,20 @@ class LRUCache:
             fast = fast.next.next
             slow = slow.next
         return False
+
+    # 86*
+    def partition(self, head: Optional[ListNode], x: int) -> Optional[ListNode]:
+        preLeft, preRight = ListNode(), ListNode()
+        leftCur, rightCur = preLeft, preRight
+        while head:
+            if head.val < x:
+                leftCur.next = head
+                leftCur = leftCur.next
+            else:
+                rightCur.next = head
+                rightCur = rightCur.next
+            head = head.next
+
+        leftCur.next = preRight.next
+        rightCur.next = None
+        return preLeft.next
